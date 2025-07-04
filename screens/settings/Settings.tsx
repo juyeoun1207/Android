@@ -14,6 +14,9 @@ const Settings = ({ navigation }) => {
 				<View style={{height:50, width:'100%'}}>
 					<CustomText>인스타그램</CustomText>
 				</View>
+				<View style={{width:'100%', backgroundColor:'red'}}>
+					<View style={{width:30, height:30, backgroundColor:'gray'}}></View>
+				</View>
 			</View>
 		</View>
 		<Footer navigation={navigation}/>
