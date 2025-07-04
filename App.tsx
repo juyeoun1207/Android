@@ -5,11 +5,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from './screens/home/Home'
 import CalendarScreen from './screens/calendar/Calendar'
+import LoadingScreen from './screens/loading/Loading'
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Loading">
+        <Stack.Screen name="Loading" options={{headerShown: false}} component={LoadingScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Calendar" component={CalendarScreen} />
       </Stack.Navigator>
