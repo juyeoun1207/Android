@@ -4,23 +4,37 @@ import CustomText from '../../components/CustomText';
 import Footer from '../../components/Footer'
 const Settings = ({ navigation }) => {
   return (
-    <Container>
-		<View style={{display:'flex',width:'100%', flex:1, paddingTop:'10%'}}>
-      		<View style={{height:'50%', width:'100%', alignItems:'center', display:'flex', paddingLeft:'10%', paddingRight:'10%'}}>
-				<CustomText style={{fontSize:20}}>7/7 까지 성공률 : 30%</CustomText>
-				<View style={{width:'100%',marginTop:10,display:'flex', flex:1, backgroundColor:'lightgray'}}></View>
-			</View>
-      		<View style={{height:'50%'}}>
-				<View style={{height:50, width:'100%'}}>
-					<CustomText>인스타그램</CustomText>
-				</View>
-				<View style={{width:'100%', backgroundColor:'red'}}>
-					<View style={{width:30, height:30, backgroundColor:'gray'}}></View>
-				</View>
+    <Container key="setting-container">
+      	<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
+        	<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
+          	<CustomText style={{ fontSize: 30 }}>알람 설정</CustomText></View>
+			
+			<View style={{gap: 16}}>
+          		<View style={styles.settingBox}><CustomText style={styles.settingText}>소리 설정</CustomText></View>
+          		<View style={styles.settingBox}><CustomText style={styles.settingText}>진동 설정</CustomText></View>
+          		<View style={styles.settingBox}><CustomText style={styles.settingText}>글귀 설정</CustomText></View>
+          		<View style={styles.settingBox}><CustomText style={styles.settingText}>방탄소년단 에디션</CustomText></View>
+          		<View style={styles.settingBox}><CustomText style={styles.settingText}>아일릿 에디션</CustomText></View>
 			</View>
 		</View>
 		<Footer navigation={navigation}/>
     </Container>
   );
 }
+
+
+const styles = {
+  settingBox: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderColor: '#cccccc',
+    borderWidth: 1,
+    padding: 12,
+    borderRadius: 8,
+  },
+  settingText: {
+    fontSize: 20,
+  }
+};
+
 export default Settings

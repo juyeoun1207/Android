@@ -9,14 +9,14 @@ import SettingsScreen from './screens/settings/Settings'
 const Stack = createNativeStackNavigator();
 const App = () => {
   return (
-		<NavigationContainer>
-		<Stack.Navigator initialRouteName="Loading">
-			<Stack.Screen name="Loading" options={{headerShown: false}} component={LoadingScreen} />
-			<Stack.Screen name="Home" options={{headerShown: false}} component={HomeScreen} />
-			<Stack.Screen name="Calendar" options={{headerShown: false}} component={CalendarScreen} />
-			<Stack.Screen name="Settings" options={{headerShown: false}} component={SettingsScreen} />
-		</Stack.Navigator>
-		</NavigationContainer>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Loading">
+        <Stack.Screen name="Loading" options={{headerShown: false}} component={LoadingScreen} />
+        <Stack.Screen name="Home" options={{headerShown: false}} component={HomeScreen} />
+        <Stack.Screen name="Calendar" options={{headerShown: false}} component={CalendarScreen} />
+        <Stack.Screen name="Settings" options={{headerShown: false}} component={SettingsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

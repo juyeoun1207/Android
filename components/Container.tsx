@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
 })
 const Container = ({ children, style, ...props }) => {
   return (
-    <View style={styles.container}>{children}</View>
+    <View style={{...styles.container, ...style}}>{children}</View>
   );
 }
 export default Container
