@@ -2,7 +2,7 @@ import { Button, Text, View } from 'react-native';
 import Container from '../../components/Container'
 import CustomText from '../../components/CustomText';
 import Footer from '../../components/Footer'
-const Home = ({ navigation }) => {
+const Settings = ({ navigation }) => {
   return (
     <Container>
 		<View style={{display:'flex',width:'100%', flex:1, paddingTop:'10%'}}>
@@ -20,4 +20,4 @@ const Home = ({ navigation }) => {
     </Container>
   );
 }
-export default Home
+export default Settings

@@ -12,8 +12,8 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Loading">
         <Stack.Screen name="Loading" options={{headerShown: false}} component={LoadingScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Calendar" component={CalendarScreen} />
+        <Stack.Screen name="Home" options={{headerShown: false}} component={HomeScreen} />
+        <Stack.Screen name="Calendar" options={{headerShown: false}} component={CalendarScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

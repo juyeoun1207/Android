@@ -1,11 +1,14 @@
 import { Button, Text, View } from 'react-native';
-
+import Container from '../../components/Container'
+import Footer from '../../components/Footer'
 const Calendar = ({ navigation }) => {
   return (
-    <View>
-      <Text>캘린더 화면</Text>
-      <Button title="홈으로 이동" onPress={() => navigation.navigate('Home')} />
-    </View>
+    <Container>
+		<View style={{display:'flex', flex:1}}>
+      		<Text>홈 화면</Text>
+		</View>
+		<Footer navigation={navigation}/>
+    </Container>
   );
 }
 export default Calendar
