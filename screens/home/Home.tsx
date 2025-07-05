@@ -6,7 +6,7 @@ const Home = ({ navigation }) => {
   return (
     <Container>
 		<View style={{display:'flex',width:'100%', flex:1, paddingTop:'10%'}}>
-      		<View style={{height:'50%', width:'100%', alignItems:'center', display:'flex', paddingLeft:'10%', paddingRight:'10%'}}>
+      		<View style={{height:'50%', paddingBottom:10, width:'100%', alignItems:'center', display:'flex', paddingLeft:'10%', paddingRight:'10%'}}>
 				<CustomText style={{fontSize:20}}>7/7 까지 성공률 : 30%</CustomText>
 				<View style={{width:'100%',marginTop:10,display:'flex', flex:1, backgroundColor:'lightgray'}}></View>
 			</View>
