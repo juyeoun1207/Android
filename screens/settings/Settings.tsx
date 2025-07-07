@@ -4,12 +4,17 @@ import vibrationTypeZustand from '../../store/vibrationType'
 import Container from '../../components/Container'
 import CustomText from '../../components/CustomText';
 import Footer from '../../components/Footer'
+import useQuoteZustand from '../../store/useQuote';
 
 const Settings = ({ navigation }) => {
   const soundType = soundTypeZustand((state) => state.soundType);
   const setSoundType = soundTypeZustand((state) => state.setSoundType);
   const vibrationType = vibrationTypeZustand((state) => state.vibrationType);
   const setVibrationType = vibrationTypeZustand((state) => state.setVibrationType);
+  const currentQuote = useQuoteZustand((state) => state.selectedQuote);
+  const quoteList = useQuoteZustand((state) => state.quoteList);
+  const selectedQuoteObj = quoteList.find((q) => q.text === currentQuote);
+
   return (
     <Container>
       	<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
@@ -43,9 +48,20 @@ const Settings = ({ navigation }) => {
 				</Pressable>
 				
 				<CustomText style={{...styles.settingText, marginTop:10}}>현재 글귀</CustomText>
-				<View style={styles.selectedQuoteBox}>
-					<CustomText style={styles.selectedQuoteText}>잠시 잊은 할 일 없었나요?</CustomText>
-				</View>
+        <View style={styles.selectedQuoteBox}>
+          <View>
+            <CustomText style={styles.selectedQuoteText}>{currentQuote}</CustomText>
+          </View>
+        </View>
+        {selectedQuoteObj && (
+          <View style={{alignItems: 'flex-end', marginTop: -10, marginRight: 15}}>
+            <CustomText style={{fontSize: 12, color: '#666'}}>
+              {selectedQuoteObj.type} ({selectedQuoteObj.name})
+            </CustomText>
+          </View>
+        )}
+
+        
 			</View>
 		</View>
 		<Footer navigation={navigation}/>

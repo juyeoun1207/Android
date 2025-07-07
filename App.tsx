@@ -11,6 +11,7 @@ import BTSScreen from './screens/settings/components/BTS'
 import ILLITScreen from './screens/settings/components/ILLIT'
 import instagramScreen from './screens/home/components/instagram'
 import CameraScreen from './screens/camera/CameraTest'
+import TimeSettingScreen from './screens/home/components/TimeSetting'
 const Stack = createNativeStackNavigator();
 const App = () => {
 	
@@ -26,6 +27,7 @@ const App = () => {
         <Stack.Screen name="BTS" options={{headerShown: false}} component={BTSScreen} />
         <Stack.Screen name="ILLIT" options={{headerShown: false}} component={ILLITScreen} />
         <Stack.Screen name="instagram" options={{headerShown: false}} component={instagramScreen} />
+        <Stack.Screen name="TimeSetting" options={{headerShown: false}} component={TimeSettingScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

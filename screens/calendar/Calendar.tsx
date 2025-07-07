@@ -6,6 +6,7 @@ import ViewShot, {captureRef} from 'react-native-view-shot'
 import {Calendar as CalendarComponent, CalendarList, Agenda} from 'react-native-calendars'
 import CustomText from '../../components/CustomText';
 import Icon from 'react-native-vector-icons/Feather'
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal'
 import RNFS from 'react-native-fs'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -25,6 +26,15 @@ const Calendar = ({ navigation }) => {
 	const calendarRef = useRef();
 	const [image, setImage] = useState('')
 	const [photoMap, setPhotoMap] = useState({});
+
+	const [selectedImages, setSelectedImages] = useState([
+    	require('../../assets/images/calendar-example.png'),
+    	require('../../assets/images/calendar-example2.jpg'),
+    	require('../../assets/images/calendar-example3.jpg'),
+  	]);
+
+  	const [currentImageIndex, setCurrentImageIndex] = useState(0);
+ 	const [representativeImages, setRepresentativeImages] = useState({});
 	const saveToGallery = async () => {
 		try {
 		  // 캡처
@@ -69,6 +79,7 @@ const Calendar = ({ navigation }) => {
 	};
 	loadPhotos();
 	}, []);
+
 	return (
 		<Container>
 			<View style={{display:'flex', width:'100%', paddingLeft:'5%', paddingRight:'5%', paddingTop:'40%', flex:1}}>
@@ -117,23 +128,73 @@ const Calendar = ({ navigation }) => {
 				onBackdropPress={() => setModalVisible(false)}
 				style={{ justifyContent: 'center', alignItems: 'center' }} 
 			>
-				<View style={{backgroundColor:'white', width:300, height:400, borderColor: '#cccccc', borderRadius: 10, padding: 20, alignItems:'center'}}>
+				<View style={{backgroundColor:'white', width:350, height:400, borderColor: '#cccccc', borderRadius: 10, padding: 20, alignItems:'center'}}>
 					<CustomText style={{fontSize:25, marginBottom:10}}>
 						{selectedDate?.year || ''}.{selectedDate?.month || ''}.{selectedDate?.day || ''}.
 					</CustomText>
-					<Image
-						source={require('../../assets/images/calendar-example.png')}
-						style={{width: 200, height: 200}}
-						resizeMode='contain'
-					/>
+					<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+						<TouchableOpacity
+						disabled={currentImageIndex === 0}
+						onPress={() => setCurrentImageIndex(currentImageIndex - 1)}
+						style={{ padding: 10 }}
+						>
+						<Icon
+							name="arrow-left"
+							size={24}
+							color={currentImageIndex === 0 ? '#ccc' : '#000'}
+						/>
+						</TouchableOpacity>
+
+						<Image
+						source={selectedImages[currentImageIndex]}
+						style={{ width: 270, height: 300, marginHorizontal: 0 }}
+						resizeMode="contain"
+						/>
+
+						<TouchableOpacity
+						disabled={currentImageIndex === selectedImages.length - 1}
+						onPress={() => setCurrentImageIndex(currentImageIndex + 1)}
+						style={{ padding: 10 }}
+						>
+						<Icon
+							name="arrow-right"
+							size={24}
+							color={currentImageIndex === selectedImages.length - 1 ? '#ccc' : '#000'}
+						/>
+						</TouchableOpacity>
+					</View>
+
 					<TouchableOpacity
-						onPress={() => setModalVisible(false)}
-						style={{marginTop: 15}}
+						onPress={() => {
+						setRepresentativeImages({
+							...representativeImages,
+							[selectedDate]: selectedImages[currentImageIndex]
+						});
+						}}
+						style={{ position: 'absolute', top: 40, right: 40 }}
 					>
-						<CustomText>닫기</CustomText>
+						<MaterialIcon
+						name={
+							representativeImages[selectedDate] === selectedImages[currentImageIndex]
+							? 'star'
+							: 'star-border'
+						}
+						size={30}
+						color={
+							representativeImages[selectedDate] === selectedImages[currentImageIndex]
+							? '#FFD700'
+							: '#ccc'
+						}
+						/>
 					</TouchableOpacity>
-				</View>
-			</Modal>
+
+					<TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 5 }}>
+						<CustomText style={{ fontSize: 20, marginTop:0 }}>닫기</CustomText>
+					</TouchableOpacity>
+					</View>
+				</Modal>
+
 			<Footer navigation={navigation}/>
 		</Container>
 	)
