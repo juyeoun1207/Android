@@ -6,14 +6,18 @@ import Tts from 'react-native-tts';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 
-const defaultQuotes = [
-  {text:'잠시 잊은 할 일 없었나요?'},
-  {text:'다시 집중할 시간입니다.'},
-  {text:'지금 이 순간을 담아보면 어떨까요?'}
+const Week = [
+  {name:'월요일', success_rate:'50%'},
+  {name:'화요일', success_rate:'20%'},
+  {name:'수요일', success_rate:'0%'},
+  {name:'목요일', success_rate:'50%'},
+  {name:'금요일', success_rate:'100%'},
+  {name:'토요일', success_rate:'100%'},
+  {name:'일요일', success_rate:'100%'},
 ];
 
 
-const Quote = ({ navigation }) => {
+const instagram = ({ navigation }) => {
    const [text, setText] = useState('')
    const [currentQuote, setCurrentQuote] = useState('');
    return (
@@ -25,18 +29,17 @@ const Quote = ({ navigation }) => {
          </Pressable>
 
          <View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
-            <CustomText style={{ fontSize: 30 }}>글귀 설정</CustomText>
+            <CustomText style={{ fontSize: 30 }}>인스타그램</CustomText>
          </View>
 
          <View>
-            <CustomText style={{fontSize:20, marginBottom:15}}>기본 글귀</CustomText>
+            <CustomText style={{fontSize:20, marginBottom:15}}>시간 제한 : 2H</CustomText>
 
             {defaultQuotes.map((item, index) => (
             <Pressable
                key={index}
                onPress={() => {
-                  Tts.speak(item.text);
-                  setCurrentQuote(item.text);
+
                }}
                style={{...styles.quoteBox, flexDirection: 'row', alignItems: 'center', marginBottom: 8,}}>
                   <View style={{width:32}}>
@@ -118,4 +121,4 @@ const styles = {
   }
 };
 
-export default Quote
+export default instagram
