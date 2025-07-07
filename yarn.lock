@@ -1731,6 +1731,18 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
+"@react-native-community/datetimepicker@^8.4.2", "@react-native-community/datetimepicker@>=6.7.0":
+  version "8.4.2"
+  resolved "https://registry.npmjs.org/@react-native-community/datetimepicker/-/datetimepicker-8.4.2.tgz"
+  integrity sha512-V/s+foBfjlWGV8MKdMhxugq0SPMtYqUEYlf+sMrKUUm5Gx3pA9Qoum2ZQUqBfI4A8kgaEPIGyG/YsNX7ycnNSA==
+  dependencies:
+    invariant "^2.2.4"
+
+"@react-native-picker/picker@^2.11.1":
+  version "2.11.1"
+  resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.11.1.tgz"
+  integrity sha512-ThklnkK4fV3yynnIIRBkxxjxR4IFbdMNJVF6tlLdOJ/zEFUEFUEdXY0KmH0iYzMwY8W4/InWsLiA7AkpAbnexA==
+
 "@react-native/assets-registry@0.80.1":
   version "0.80.1"
   resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.80.1.tgz"
@@ -3092,6 +3104,11 @@ data-view-byte-offset@^1.0.1:
     call-bound "^1.0.2"
     es-errors "^1.3.0"
     is-data-view "^1.0.1"
+
+date-fns@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.npmjs.org/date-fns/-/date-fns-3.6.0.tgz"
+  integrity sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==
 
 dayjs@^1.8.15:
   version "1.11.13"
@@ -5885,6 +5902,13 @@ react-native-is-edge-to-edge@^1.1.7:
   resolved "https://registry.npmjs.org/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.2.1.tgz"
   integrity sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==
 
+react-native-modal-datetime-picker@^18.0.0:
+  version "18.0.0"
+  resolved "https://registry.npmjs.org/react-native-modal-datetime-picker/-/react-native-modal-datetime-picker-18.0.0.tgz"
+  integrity sha512-0jdvhhraZQlRACwr7pM6vmZ2kxgzJ4CpnmV6J3TVA6MrXMXK6Zo/upRBKkRp0+fTOiKuNblzesA2U59rYo6SGA==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-modal@^14.0.0-rc.1:
   version "14.0.0-rc.1"
   resolved "https://registry.npmjs.org/react-native-modal/-/react-native-modal-14.0.0-rc.1.tgz"
@@ -5929,7 +5953,7 @@ react-native-vector-icons@^10.2.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@*, "react-native@>= 0.30.0", react-native@>=0.70.0, react-native@0.80.1:
+react-native@*, "react-native@>= 0.30.0", react-native@>=0.65.0, react-native@>=0.70.0, react-native@0.80.1:
   version "0.80.1"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.80.1.tgz"
   integrity sha512-cIiJiPItdC2+Z9n30FmE2ef1y4522kgmOjMIoDtlD16jrOMNTUdB2u+CylLTy3REkWkWTS6w8Ub7skUthkeo5w==

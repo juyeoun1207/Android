@@ -17,7 +17,7 @@ const Home = ({ navigation }) => {
     <Container>
 		<View style={{display:'flex',width:'100%', flex:1, paddingTop:'10%'}}>
       		<View style={{height:'50%', paddingBottom:10, width:'100%', alignItems:'center', display:'flex', paddingLeft:'10%', paddingRight:'10%'}}>
-				<CustomText style={{fontSize:25, marginTop:10, marginBottom:20}}>7월 성공률 : 30%</CustomText>
+				<CustomText style={{fontSize:23, marginTop:10, marginBottom:20}}>7월 2주차 성공률 : 30%</CustomText>
 				<View style={{width:'100%',marginTop:10,display:'flex', flex:1, backgroundColor:'lightgray'}}></View>
 			</View>
       		<View style={{height:'50%'}}>
@@ -27,7 +27,7 @@ const Home = ({ navigation }) => {
 						<View style={{gap:15}}>
 							{appList.map((data, index) => {
 								return (
-									<View style={{...styles.appListBox, marginLeft:20, flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
+									<View key={index} style={{...styles.appListBox, marginLeft:20, flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
 										<CustomText style={{fontSize:20}}>{data.name}</CustomText>
 										<SimpleIcon name="arrow-right" size={10} color="#333"/>
 									</View>
