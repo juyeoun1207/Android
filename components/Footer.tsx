@@ -10,11 +10,11 @@ const styles = StyleSheet.create({
 	}
 })
 
-const Footer = ({ navigation }) => {
+const Footer = ({ navigation, style }) => {
 	const tabType = tabTypeZustand((state) => state.tabType)
 	const setTabType = tabTypeZustand((state) => state.setTabType)
 	return (
-		<View style={{width:'100%', flexDirection:'row', borderTopWidth:1, borderTopColor:'#a9a9a9'}}>
+		<View style={{...style, width:'100%', flexDirection:'row', borderTopWidth:1, borderTopColor:'#a9a9a9'}}>
 			<Pressable
 				style={{width:'33%', backgroundColor: tabType == 'Calendar' ? '#efefef' : '#fff', height:50, justifyContent:'center', alignItems:'center'}}
 				onPress={() => {

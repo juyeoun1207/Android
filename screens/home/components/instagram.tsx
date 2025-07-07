@@ -5,7 +5,7 @@ import CustomText from '../../../components/CustomText';
 import Tts from 'react-native-tts';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
-
+const defaultQuotes = []
 const Week = [
   {name:'월요일', success_rate:'50%'},
   {name:'화요일', success_rate:'20%'},

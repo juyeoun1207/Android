@@ -1,7 +1,42 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	package="com.myfirstapp"
+>
+
 
     <uses-permission android:name="android.permission.INTERNET" />
+	<!-- 카메라접근권한 -->
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+	<!-- 갤러리접근권한 -->
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<!-- <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
+	<!-- 스크린타임 권한 -->
+	<uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+	<!-- 아이콘 가져오는관련 -->
+	<queries>
+		<package android:name="com.instagram.android"/>
+		<package android:name="com.moodmemo"/>
+		<package android:name="com.kakao.talk"/>
+		<package android:name="com.nhn.android.search"/>
+		<package android:name="com.google.android.youtube"/>
+		<package android:name="com.android.chrome"/>
+		<package android:name="com.google.android.googlequicksearchbox"/>
+		<package android:name="com.google.android.gm"/>
+		<package android:name="com.example.myapplication"/>
+	</queries>
+	<!--  -->
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -22,5 +57,15 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+	  <!-- 스크린타임용 서비스 -->
+	  <uses-library android:name="android.test.runner" android:required="false"/>
+	  <service
+            android:name=".MonitoringService"
+            android:foregroundServiceType="location|dataSync"
+            android:exported="false" />
+	  <service
+		android:name=".HeadlessService"
+		android:exported="false"
+		/>
     </application>
 </manifest>

@@ -10,8 +10,10 @@ import QuoteScreen from './screens/settings/components/Quote'
 import BTSScreen from './screens/settings/components/BTS'
 import ILLITScreen from './screens/settings/components/ILLIT'
 import instagramScreen from './screens/home/components/instagram'
+import CameraScreen from './screens/camera/CameraTest'
 const Stack = createNativeStackNavigator();
 const App = () => {
+	
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Loading">
@@ -19,6 +21,7 @@ const App = () => {
         <Stack.Screen name="Home" options={{headerShown: false}} component={HomeScreen} />
         <Stack.Screen name="Calendar" options={{headerShown: false}} component={CalendarScreen} />
         <Stack.Screen name="Settings" options={{headerShown: false}} component={SettingsScreen} />
+        <Stack.Screen name="Camera" options={{headerShown: false}} component={CameraScreen} />
         <Stack.Screen name="Quote" options={{headerShown: false}} component={QuoteScreen} />
         <Stack.Screen name="BTS" options={{headerShown: false}} component={BTSScreen} />
         <Stack.Screen name="ILLIT" options={{headerShown: false}} component={ILLITScreen} />
