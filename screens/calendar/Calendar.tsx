@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
 	},
 	nonMarkingDate:{
 		color:'#262729'
+	},
+	text: {
+		fontFamily:'DungGeunMo'
 	}
 })
 const today = new Date();
@@ -26,6 +29,11 @@ const Calendar = ({ navigation }) => {
 	const calendarRef = useRef();
 	const [image, setImage] = useState('')
 	const [photoMap, setPhotoMap] = useState({});
+
+	const failedDates = {
+    	'2025-07-08': true,
+    	'2025-07-09': true,
+  	};
 
 	const [selectedImages, setSelectedImages] = useState([
     	require('../../assets/images/calendar-example.png'),
@@ -55,10 +63,10 @@ const Calendar = ({ navigation }) => {
 			NativeModules.MediaScanner.scanFile(destPath, 'image/png');
 		  }
 	  
-		  Alert.alert('✅ 저장 완료', '달력 이미지가 갤러리에 저장되었습니다.');
+		  Alert.alert('저장 완료', '달력 이미지가 갤러리에 저장되었습니다.');
 		} catch (e) {
 		  console.error('갤러리 저장 실패:', e);
-		  Alert.alert('❌ 저장 실패', '이미지를 저장하지 못했습니다.');
+		  Alert.alert('저장 실패', '이미지를 저장하지 못했습니다.');
 		}
 	  };
 	useEffect(() => {
@@ -88,32 +96,50 @@ const Calendar = ({ navigation }) => {
 						markedDates={{
 							[formatted]:{todayStyle: {color:'purple'}}
 						}}
-						dayComponent={({date, state, marking}) => {
-							const key = date.dateString; // 'YYYY-MM-DD'
-  							const path = photoMap[key];
-							return(
-								<View key={key} style={{backgroundColor:'white', width:30, height:40}}>
-									<TouchableOpacity 
-										disabled={state == 'disabled' ? true : undefined}
-										onPress={() => {
-											console.log('pressed');
-											setSelectedDate(date);
-											setModalVisible(true);
-										}}
-									>
-										<View style={{width:20, height:10, marginBottom:5}}>
-											<Text style={[marking?.todayStyle, {fontSize:10}]}>{date.day}</Text>
-										</View>
-										{path && 
-										<Image
-											// source={require('../../assets/images/calendar-example.png')}
-											source={{uri: 'file://' + path}}
-											style={{width:30, height:30, borderRadius:5}}
-											resizeMode="contain"
-										/>}
-									</TouchableOpacity>
-								</View>
-							)
+						dayComponent={({ date, state, marking }) => {
+						const key = date.dateString;
+						const path = photoMap[key];
+						const isFailed = failedDates[key];
+
+						return (
+							<View
+							key={key}
+							style={{
+								backgroundColor: 'white',
+								width: 30,
+								height: 45,
+								alignItems: 'center',
+							}}
+							>
+							<TouchableOpacity
+								disabled={state === 'disabled' || isFailed} // 실패 날짜는 비활성화
+								onPress={() => {
+								if (!isFailed) {
+									setSelectedDate(date);
+									setModalVisible(true);
+								}
+								}}
+							>
+								{/* 날짜 숫자 */}
+								<Text style={[marking?.todayStyle, { fontSize: 10, marginBottom: 2, textAlign:'center' }]}>
+								{date.day}
+								</Text>
+
+								{/* 이미지 또는 실패 텍스트 */}
+								{path ? (
+								<Image
+									source={{ uri: 'file://' + path }}
+									style={{ width: 30, height: 30, borderRadius: 5 }}
+									resizeMode="contain"
+								/>
+								) : isFailed ? (
+								<Text style={{...styles.text, marginTop:2, fontSize: 15, color: 'red' }}>
+									실패
+								</Text>
+								) : null}
+							</TouchableOpacity>
+							</View>
+						);
 						}}
 					/>
 				</ViewShot>
@@ -146,11 +172,31 @@ const Calendar = ({ navigation }) => {
 						/>
 						</TouchableOpacity>
 
-						<Image
+						{/* <Image
 						source={selectedImages[currentImageIndex]}
 						style={{ width: 270, height: 300, marginHorizontal: 0 }}
 						resizeMode="contain"
+						/> */}
+
+						<View
+						style={{
+							width: 250,
+							height: 250,
+							borderColor: '#888',
+							borderWidth: 1,
+							justifyContent: 'center',
+							alignItems: 'center',
+							borderRadius: 12,
+							marginTop:20,
+							marginBottom:25
+						}}
+						>
+						<Image
+							source={require('../../assets/images/ImageIcon.png')}
+							style={{ width: 100, height: 100, marginBottom:25 }}
 						/>
+						<CustomText style={{ fontSize: 20, color: '#888' }}>이미지 업로드하기</CustomText>
+						</View>
 
 						<TouchableOpacity
 						disabled={currentImageIndex === selectedImages.length - 1}

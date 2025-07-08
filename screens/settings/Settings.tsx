@@ -19,7 +19,7 @@ const Settings = ({ navigation }) => {
     <Container>
       	<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
         	<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
-          	<CustomText style={{ fontSize: 30 }}>알람 설정</CustomText></View>
+          	<CustomText style={{ fontSize: 30 }}>알림 설정</CustomText></View>
 			
 			<View style={{gap: 16}}>
           		<View style={styles.settingBoxRow}>

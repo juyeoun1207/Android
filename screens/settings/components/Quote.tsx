@@ -1,11 +1,22 @@
 import React, {useState} from 'react'
-import { KeyboardAvoidingView, Platform, ScrollView, Pressable, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Pressable, TextInput, View, Button } from 'react-native';
 import Container from '../../../components/Container'
 import CustomText from '../../../components/CustomText';
 import Tts from 'react-native-tts';
+import SoundPlayer from 'react-native-sound-player';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import useQuoteZustand from '../../../store/useQuote';
+
+
+const playQuoteAudio = (fileName) => {
+  try {
+    const nameWithoutExt = fileName.replace('.mp3', '');
+    SoundPlayer.playSoundFile(nameWithoutExt, 'mp3'); // '파일명', '확장자'
+  } catch (e) {
+    console.log('오디오 재생 오류:', e);
+  }
+};
 
 const Quote = ({ navigation }) => {
    const quoteList = useQuoteZustand((state) => state.quoteList);
@@ -30,7 +41,6 @@ const Quote = ({ navigation }) => {
 		behavior={'height'}
 		keyboardVerticalOffset={0}
 	>
-		<ScrollView contentContainerStyle={{flexGrow:1}}>
 			<Container>
 				<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
 
@@ -41,7 +51,7 @@ const Quote = ({ navigation }) => {
 					<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
 						<CustomText style={{ fontSize: 30 }}>글귀 설정</CustomText>
 					</View>
-
+            <ScrollView contentContainerStyle={{flexGrow:1}}>
 					<View>
 						<CustomText style={{fontSize:20, marginBottom:15}}>기본 글귀</CustomText>
 
@@ -49,7 +59,7 @@ const Quote = ({ navigation }) => {
             <Pressable
                key={index}
                onPress={() => {
-                  Tts.speak(item.text);
+                  playQuoteAudio(item.audio);
                   setSelectedQuote(item.text);
                }}
                style={{...styles.quoteBox, flexDirection: 'row', alignItems: 'center', marginBottom: 8,}}>
@@ -62,9 +72,8 @@ const Quote = ({ navigation }) => {
                   </CustomText>
             </Pressable>
             ))}
-
-
-            <View style={{ marginTop: 10 }}>
+            
+            <View style={{ marginTop: 30 }}>
             <Pressable
                onPress={() => {navigation.navigate('BTS')}}
                style={styles.quoteBox}
@@ -140,10 +149,10 @@ const Quote = ({ navigation }) => {
             />
             </View>
             </View>
+            </ScrollView>
          </View>
 
 			</Container>
-		</ScrollView>
 	</KeyboardAvoidingView>
   )
 };

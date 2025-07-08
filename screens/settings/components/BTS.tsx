@@ -1,10 +1,21 @@
 import React, {useState} from 'react'
-import { Button, Pressable, Text, View } from 'react-native';
+import { Button, Pressable, Text, View, ScrollView } from 'react-native';
 import Container from '../../../components/Container'
 import CustomText from '../../../components/CustomText';
 import Tts from 'react-native-tts';
+import SoundPlayer from 'react-native-sound-player';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import useQuoteZustand from '../../../store/useQuote';
+
+const playQuoteAudio = (fileName) => {
+  try {
+    const nameWithoutExt = fileName.replace('.mp3', '');
+    SoundPlayer.playSoundFile(nameWithoutExt, 'mp3'); // '파일명', '확장자'
+  } catch (e) {
+    console.log('오디오 재생 오류:', e);
+  }
+};
+
 
 const BTS = ({ navigation }) => {
   const quoteList = useQuoteZustand((state) => state.quoteList);
@@ -22,15 +33,15 @@ const BTS = ({ navigation }) => {
         <View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
           <CustomText style={{ fontSize: 30 }}>방탄소년단 에디션</CustomText>
         </View>
-
+      <ScrollView contentContainerStyle={{flexGrow: 1, paddingTop:0, paddingBottom:50}}>
         <View style={{ gap: 10 }}>
           {btsQuotes.map((item, index) => (
             <View key={index}>
               <CustomText style={{fontSize:20}}>{item.name}</CustomText>
               <Pressable
                 onPress={() => {
-                  Tts.speak(item.text);
-                  setSelectedQuote(item.text); 
+                  playQuoteAudio(item.audio);
+                  setSelectedQuote(item.text);
                 }}
               >
                 <View style={{...styles.textBox, flexDirection: 'row', alignItems: 'center'}}>
@@ -45,6 +56,7 @@ const BTS = ({ navigation }) => {
             </View>
           ))}
         </View>
+        </ScrollView>
       </View>
     </Container>
   )

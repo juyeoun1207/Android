@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { Button, Pressable, TextInput, View, Text } from 'react-native';
+import { Button, Pressable, TextInput, View, ScrollView, Text } from 'react-native';
 import Container from '../../../components/Container'
 import CustomText from '../../../components/CustomText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -25,13 +25,13 @@ const instagram = ({ navigation }) => {
          <Pressable onPress={() => navigation.navigate('Home')}>
             <Icon name="arrow-back" size={30} color="#000" />
          </Pressable>
-
+   
          <View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
             <CustomText style={{ fontSize: 30 }}>인스타그램</CustomText>
             <CustomText style={{ fontSize : 15, color: 'gray', marginTop:20}}>이번 주 성공률 : 75%</CustomText>
             <CustomText style={{ fontSize : 15, color: 'gray', marginTop:5}}>이번 주 평균 이용 시간 : 1H 30M</CustomText>
          </View>
-
+         <ScrollView contentContainerStyle={{flexGrow: 1, paddingTop:50, paddingBottom:50}}>
          <View>
             <CustomText style={{fontSize:20, marginBottom:15}}>시간 제한 : 2H</CustomText>
             <View>
@@ -63,6 +63,7 @@ const instagram = ({ navigation }) => {
             </Pressable>
             ))}
             </View>
+            </ScrollView>
          </View>
 
    </Container>
