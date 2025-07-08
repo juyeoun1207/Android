@@ -282,7 +282,7 @@ const Home = ({ navigation }) => {
 			</Container>
 		:	<View style={{minHeight: screenHeight, backgroundColor:'#fff', position:'relative'}}>
 				<View style={{paddingBottom:10, position:'absolute', zIndex:10, top:0, backgroundColor:"#fff", paddingTop:20, width:'100%', alignItems:'center', display:'flex', paddingLeft:'10%', paddingRight:'10%'}}>
-					<CustomText style={{fontSize:25, marginTop:10, marginBottom:20}}>{`${new Date().getMonth() + 1}월 성공률 : ${weekSuccessRate}%`}</CustomText>
+					<CustomText style={{fontSize:25, marginTop:10, marginBottom:20}}>{`${new Date().getMonth() + 1}월 2주차 성공률 : ${weekSuccessRate}%`}</CustomText>
 					<View style={{borderWidth:1, paddingTop:5, borderColor:'#000'}}>
 						<View style={{marginBottom:10, alignItems:'center'}}>
 							<CustomText>{`이번주 평균 사용시간 : ${weekList.filter(e => e.time > 0).length > 0 ? formatSecondsToHM(weekList.filter(e => e.time > 0).reduce((a,b) => a += Number(b.time || 0), 0) / weekList.filter(e => e.time > 0).length) : '0H'}`}</CustomText>
