@@ -64,12 +64,59 @@ class UsageMonitorModule(reactContext: ReactApplicationContext) : ReactContextBa
         }
     }
 	@ReactMethod
+	fun removeUsageThreshold(packageName: String, promise: Promise) {
+		try {
+			val prefs = reactApplicationContext.getSharedPreferences("usage_thresholds", Context.MODE_PRIVATE)
+			prefs.edit().remove(packageName).apply()
+			MonitoringService.resetAlertedApp(packageName)
+			promise.resolve(null)
+		} catch (e: Exception) {
+			Log.e("MONITOR_MODULE", "removeUsageThreshold 실패: ${e.message}", e)
+			promise.reject("REMOVE_THRESHOLD_ERROR", e)
+		}
+	}
+	@ReactMethod
 	fun resetAlertedApps() {
 		try {
 			MonitoringService.resetAlertedApps()
 			Log.e("USAGE_MONITOR", "alertedApps 초기화 성공")
 		} catch (e: Exception) {
 			Log.e("USAGE_MONITOR", "alertedApps 초기화 실패: ${e.message}", e)
+		}
+	}
+	@ReactMethod
+	fun resetAlertedApp(packageName: String) {
+		try {
+			MonitoringService.resetAlertedApp(packageName)
+			Log.e("USAGE_MONITOR", "$packageName 알림 기록 초기화 성공")
+		} catch (e: Exception) {
+			Log.e("USAGE_MONITOR", "$packageName 알림 기록 초기화 실패: ${e.message}", e)
+		}
+	}
+	@ReactMethod
+	fun isUsageThresholdSet(packageName: String, promise: Promise) {
+		try {
+			val prefs = reactApplicationContext.getSharedPreferences("usage_thresholds", Context.MODE_PRIVATE)
+			val threshold = prefs.getInt(packageName, -1)  // 저장된 값이 없으면 -1 반환
+			promise.resolve(threshold != -1)
+		} catch (e: Exception) {
+			Log.e("MONITOR_MODULE", "isUsageThresholdSet 실패: ${e.message}", e)
+			promise.reject("CHECK_THRESHOLD_ERROR", e)
+		}
+	}
+	@ReactMethod
+	fun getUsageThreshold(packageName: String, promise: Promise) {
+		try {
+			val prefs = reactApplicationContext.getSharedPreferences("usage_thresholds", Context.MODE_PRIVATE)
+			if (prefs.contains(packageName)) {
+				val seconds = prefs.getInt(packageName, -1)
+				promise.resolve(seconds) // 초 단위로 리턴
+			} else {
+				promise.resolve(null) // 설정된 값이 없을 경우 null
+			}
+		} catch (e: Exception) {
+			Log.e("MONITOR_MODULE", "getUsageThreshold 실패: ${e.message}", e)
+			promise.reject("GET_THRESHOLD_ERROR", e)
 		}
 	}
 	private fun getAppIconBase64(packageName: String): String? {

@@ -1,9 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, Image,Pressable, View, StyleSheet } from 'react-native';
 import Container from '../../components/Container'
 import CustomText from '../../components/CustomText';
 import LoadingDog from '../../components/LoadingDog';
 import tabTypeZustand from '../../store/tabType'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import currentChannelZustand from '../../store/currentChannel'
+import {createAlarm} from '../../utils/handleAlarm'
+import {checkNotificationFlag} from '../../utils/checkNotificationFlag'
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -19,16 +23,36 @@ const styles = StyleSheet.create({
 })
 
 const Loading = ({ navigation }) => {
+	const [loading, setLoading] = useState(true)
 	const setTabType = tabTypeZustand((state) => state.setTabType)
-	useEffect(() => {
+	const currentChannel = currentChannelZustand(state => state.currentChannel)
+	const setCurrentChannel = currentChannelZustand(state => state.setCurrentChannel)
+	const settingApp = async() => {
 		setTabType('Home')
-	},[])
+		await checkNotificationFlag(navigation)
+		await createChannel()
+	}
+	const createChannel = async() => {
+		if(!currentChannel){
+			setCurrentChannel('alarm')
+			await createAlarm('alarm', 'default_alarm', 'alarmexample1')
+		}
+		setLoading(false)
+	}
+	useEffect(() => {
+		settingApp()
+	}, []);
   return (
-	<Pressable style={({pressed}) => ({...styles.container})} onPress={() => navigation.navigate('Home')}>
+	<Pressable 
+		style={({pressed}) => ({...styles.container})}
+		onPress={() => {
+			if(!loading) navigation.navigate('Home');
+		}}
+	>
 		<Container>
 			<LoadingDog/>
 			<View style={{display:'flex', width:'100%', marginTop:-15, alignItems:'center'}}>
-				<CustomText style={{fontSize:30}}>잔소리</CustomText>
+				<CustomText style={{fontSize:30}}>{loading ? '로딩중...' : '잔소리'}</CustomText>
 
 			</View>
 		</Container>

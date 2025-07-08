@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/Feather'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal'
 import RNFS from 'react-native-fs'
+import {monthObj} from '../../utils/listItem'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const styles = StyleSheet.create({
 	markingDate: {
@@ -69,24 +70,31 @@ const Calendar = ({ navigation }) => {
 		  Alert.alert('저장 실패', '이미지를 저장하지 못했습니다.');
 		}
 	  };
-	useEffect(() => {
-	const loadPhotos = async () => {
-		const newMap = {};
-		const today = new Date();
-		const start = new Date(today);
-		start.setDate(start.getDate() - 30); // 한달 전부터
-		const end = new Date(today);
-		end.setDate(end.getDate() + 30); // 한달 후까지
+	// useEffect(() => {
+	// const loadPhotos = async () => {
+	// 	const newMap = {};
+	// 	const today = new Date();
+	// 	const start = new Date(today);
+	// 	start.setDate(start.getDate() - 30); // 한달 전부터
+	// 	const end = new Date(today);
+	// 	end.setDate(end.getDate() + 30); // 한달 후까지
 	
-		for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-		const dateKey = d.toISOString().split('T')[0];
-		const path = await AsyncStorage.getItem(`photo-${dateKey}`);
-		if (path) newMap[dateKey] = path;
-		}
-		setPhotoMap(newMap);
-	};
-	loadPhotos();
-	}, []);
+	// 	for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+	// 		const dateKey = d.toISOString().split('T')[0];
+	// 		const path = await AsyncStorage.getItem(`photo-${dateKey}`);
+	// 		if (path) newMap[dateKey] = path;
+	// 	}
+	// 	setPhotoMap(newMap);
+	// };
+	// loadPhotos();
+	// }, []);
+	const getInfo = async() => {
+		let photoArr = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}
+		setPhotoMap(photoArr)
+	}
+	useEffect(() => {
+		getInfo()
+	},[])
 
 	return (
 		<Container>
@@ -97,8 +105,10 @@ const Calendar = ({ navigation }) => {
 							[formatted]:{todayStyle: {color:'purple'}}
 						}}
 						dayComponent={({ date, state, marking }) => {
-						const key = date.dateString;
-						const path = photoMap[key];
+						// const key = date.dateString;
+						// const path = photoMap[key];
+						const key = 'day' + date.day; // 'YYYY-MM-DD'
+						const path = photoMap?.[key]?.filter(e => e.path)?.[0]?.path || '';
 						const isFailed = failedDates[key];
 
 						return (

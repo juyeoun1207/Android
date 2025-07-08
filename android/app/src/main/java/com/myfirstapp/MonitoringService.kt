@@ -14,7 +14,7 @@ class MonitoringService : Service() {
 
     private lateinit var usageStatsManager: UsageStatsManager
     private val handler = Handler(Looper.getMainLooper())
-    private val checkInterval: Long = 10 * 1000 // 10초마다 확인
+    private val checkInterval: Long = 10 * 1000 // 10초 마다 확인
 
     // 앱별 제한 시간 설정 (예시)
     //private val usageLimits = mapOf(
@@ -28,8 +28,54 @@ class MonitoringService : Service() {
 		fun resetAlertedApps() {
 			alertedApps.clear()
 		}
+		
+		fun resetAlertedApp(packageName: String) {
+			alertedApps.remove(packageName)
+		}
 	}
+	//알람 호출
+	private fun showOveruseNotification(pkg: String, appName: String) {
+		val alarmId = "alarm_${System.currentTimeMillis()}"
 
+		val intent = Intent(this, MainActivity::class.java).apply {
+			flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+		}
+
+		// 👉 JS에서 읽을 수 있도록 data를 extras에 명시적으로 담아줌
+		val extras = Bundle().apply {
+			putString("alarm_id", alarmId)
+			putString("app_name", appName)
+			putString("pkg_name", pkg)
+		}
+
+		val pendingIntent = PendingIntent.getActivity(
+			this, 0, intent,
+			PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+		)
+
+		val actionIntent = Intent(this, MainActivity::class.java).apply {
+			putExtra("pressAction", "camera")
+			putExtras(extras)
+		}
+		val actionPendingIntent = PendingIntent.getActivity(
+			this, 1, actionIntent,
+			PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+		)
+
+		val notification = NotificationCompat.Builder(this, "alarm")
+			.setContentTitle("⚠️ 사용시간 초과")
+			.setContentText("$appName 앱을 너무 오래 사용하고 있어요.")
+			.setSmallIcon(android.R.drawable.ic_dialog_alert)
+			.setContentIntent(pendingIntent)
+			.setAutoCancel(true)
+			.setExtras(extras) // 🔥 Notifee에서 읽기 위한 핵심
+			.addAction(android.R.drawable.ic_menu_camera, "바로 기록하기", actionPendingIntent)
+			.addAction(android.R.drawable.ic_menu_close_clear_cancel, "나중에 할래요", null)
+			.build()
+
+		val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+		manager.notify(alarmId.hashCode(), notification)
+	}
     // 하루 리셋용 시간 추적
     private var lastAlertReset: Long = System.currentTimeMillis()
 
@@ -106,10 +152,13 @@ class MonitoringService : Service() {
 
     private fun triggerAlert(pkg: String) {
 		Log.e("MonitoringService", "Triggering alert for $pkg")
+    	//val appName = getAppNameFromPackage(pkg)
+    	//showOveruseNotification(pkg, appName)
         val appName = getAppNameFromPackage(pkg)
 
         val bundle = Bundle().apply {
             putString("appName", appName)
+    		putString("packageName", pkg)
         }
 
         val intent = Intent(applicationContext, HeadlessService::class.java).apply {
