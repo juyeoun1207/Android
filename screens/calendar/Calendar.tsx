@@ -1,5 +1,5 @@
 import {useState, useEffect, useRef} from 'react'
-import { Image, Text, PermissionsAndroid, Platform, Alert, NativeModules, View, TouchableOpacity,Pressable, StyleSheet } from 'react-native';
+import { Image, Text, PermissionsAndroid, Platform, Alert, NativeModules, View, TouchableOpacity,Pressable, StyleSheet, Button } from 'react-native';
 import Container from '../../components/Container'
 import Footer from '../../components/Footer'
 import ViewShot, {captureRef} from 'react-native-view-shot'
@@ -10,6 +10,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal'
 import RNFS from 'react-native-fs'
 import {monthObj} from '../../utils/listItem'
+import {Camera, useCameraDevices} from 'react-native-vision-camera'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const styles = StyleSheet.create({
 	markingDate: {
@@ -30,6 +31,11 @@ const Calendar = ({ navigation }) => {
 	const calendarRef = useRef();
 	const [image, setImage] = useState('')
 	const [photoMap, setPhotoMap] = useState({});
+	const [isCamera, setIsCamera] = useState(false);
+	const devices = useCameraDevices();
+	const device = devices?.find(e => e.position == 'back');
+	const cameraRef = useRef<Camera>(null);
+
 
 	const failedDates = {
     	'2025-07-08': true,
@@ -98,27 +104,26 @@ const Calendar = ({ navigation }) => {
 
 	return (
 		<Container>
-			{/* {isCamera
-			?<>
-			<View style={{display:'flex',width:'100%', flex:1, justifyContent:'center', alignItems:'center'}}>
-								{device &&
-									<Camera
-										ref={cameraRef}
-										style={{flex:1, width:'100%'}}
-										device={device}
-										isActive={true}
-										photo={true}
-										video={false}
-										audio={false}
-									/>
-								}
-								<Button title="📸 촬영" onPress={takePhoto} />
-							</View>
-			</>
-			:<>기존 캘린더공간</>
-			}
+			{isCamera ? (
 			<>
-			</> */}
+			<View style={{display:'flex',width:'100%', flex:1, justifyContent:'center', alignItems:'center'}}>
+				{device &&
+					<Camera
+						ref={cameraRef}
+							style={{flex:1, width:'100%'}}
+							device={device}
+							isActive={true}
+							photo={true}
+							video={false}
+							audio={false}
+					/>
+				}
+				<Button title="📸 촬영" onPress={() => setIsCamera(false)} />
+			</View>
+			</> )
+			:
+			(
+			<>
 			<View style={{display:'flex', width:'100%', paddingLeft:'5%', paddingRight:'5%', paddingTop:'40%', flex:1}}>
 				<ViewShot ref={calendarRef}>
 					<CalendarComponent
@@ -216,27 +221,28 @@ const Calendar = ({ navigation }) => {
 								style={{ width: 100, height: 100, marginHorizontal: 0 }}
 								resizeMode="contain"
 							/>
-						:	<View
-								style={{
-									width: 250,
-									height: 250,
-									borderColor: '#888',
-									borderWidth: 1,
-									justifyContent: 'center',
-									alignItems: 'center',
-									borderRadius: 12,
-									marginTop:20,
-									marginBottom:25
-								}}
-							>
-								<Image
-									source={require('../../assets/images/ImageIcon.png')}
-									style={{ width: 100, height: 100, marginBottom:25 }}
-								/>
-								<CustomText style={{ fontSize: 20, color: '#888' }}>이미지 업로드하기</CustomText>
-							</View>
+						:	<TouchableOpacity onPress={() => setIsCamera(true)}>
+								<View
+									style={{
+										width: 250,
+										height: 250,
+										borderColor: '#888',
+										borderWidth: 1,
+										justifyContent: 'center',
+										alignItems: 'center',
+										borderRadius: 12,
+										marginTop:20,
+										marginBottom:25
+									}}
+								>
+									<Image
+										source={require('../../assets/images/ImageIcon.png')}
+										style={{ width: 100, height: 100, marginBottom:25 }}
+									/>
+									<CustomText style={{ fontSize: 20, color: '#888' }}>이미지 업로드하기</CustomText>
+								</View>
+							</TouchableOpacity>
 						}
-
 						<TouchableOpacity
 							disabled={currentImageIndex === selectedImages.length - 1}
 							onPress={() => setCurrentImageIndex(currentImageIndex + 1)}
@@ -279,6 +285,8 @@ const Calendar = ({ navigation }) => {
 					</TouchableOpacity>
 					</View>
 				</Modal>
+			</>
+			)}
 
 			<Footer navigation={navigation}/>
 		</Container>
