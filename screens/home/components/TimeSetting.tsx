@@ -31,7 +31,7 @@ const TimeSetting = ({ navigation }) => {
   }
   const getAppInfo = async() => {
 	await Promise.all([
-		getWeekSuccessList(setWeek, setLoading),
+		getWeekSuccessList(setWeek, setLoading, appData),
 		checkIsSet()
 	])
   }

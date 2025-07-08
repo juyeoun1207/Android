@@ -26,7 +26,7 @@ const AppSetting = ({ navigation }) => {
 	}
 	const getInfo = async() => {
 		await getTimeLimit()
-		await getWeekSuccessList(setWeek, setLoading)
+		await getWeekSuccessList(setWeek, setLoading, appData)
 	}
 	useEffect(() => {
 		getInfo()
