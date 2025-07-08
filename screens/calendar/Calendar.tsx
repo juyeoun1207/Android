@@ -110,12 +110,12 @@ const Calendar = ({ navigation }) => {
 				{device &&
 					<Camera
 						ref={cameraRef}
-							style={{flex:1, width:'100%'}}
-							device={device}
-							isActive={true}
-							photo={true}
-							video={false}
-							audio={false}
+						style={{flex:1, width:'100%'}}
+						device={device}
+						isActive={true}
+						photo={true}
+						video={false}
+						audio={false}
 					/>
 				}
 				<Button title="📸 촬영" onPress={() => setIsCamera(false)} />

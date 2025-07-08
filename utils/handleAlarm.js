@@ -58,7 +58,7 @@ export async function executeAlarm(id, appName, pkgName){
 	console.log('finished_execute')
 	let photoArr = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}
 	let objectKey = 'day' + new Date().getDate()
-	const findIndex = photoArr[objectKey].findIndex(e => e.pkg == pkg)
+	const findIndex = photoArr[objectKey].findIndex(e => e.pkg == pkgName)
 	if(findIndex == -1){
 		photoArr[objectKey].push({pkg: pkgName, date: '', path: ''})
 		await AsyncStorage.setItem(`month-photo`, JSON.stringify(photoArr));

@@ -63,8 +63,8 @@ const TimeSetting = ({ navigation }) => {
 				<CustomText style={{ fontSize:20, marginBottom:15 }}>시간 제한 설정</CustomText>
 				{/* 시 선택 */}
 				<Picker
-				selectedValue={selectedHour}
-				onValueChange={setSelectedHour}
+					selectedValue={selectedHour}
+					onValueChange={setSelectedHour}
 				>
 				{[...Array(24).keys()].map(h => (
 					<Picker.Item key={h} label={`${h}시간`} value={h} />
