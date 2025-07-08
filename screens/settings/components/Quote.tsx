@@ -120,34 +120,46 @@ const Quote = ({ navigation }) => {
             </View>
 
             <CustomText style={{fontSize:20, marginTop:50, marginBottom:15}}>직접 설정</CustomText>
-            <View
-               style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  borderColor: '#ccc',
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  padding: 12,
-               }}
-            >
-            <View style={{width: 32}}>
-               {currentQuote === text.trim() && text.trim() !== '' && (
-                  <Icon name="check" size={20} color="#333" />
-               )}
-            </View>
-            <TextInput
-               style={{flex: 1, fontSize: 14}}
-               placeholder="직접 입력해보세요"
-               value={text}
-               onChangeText={setText}
-               onSubmitEditing={() => {
-                  if (text.trim()) {
-                  setSelectedQuote(text.trim());
-                  Tts.speak(text.trim());
-                  }
-               }}
-            />
-            </View>
+               <View style={{ marginBottom: 8 }}>
+               {/* 입력 박스 */}
+               <View
+                  style={{
+                     flexDirection: 'row',
+                     alignItems: 'center',
+                     borderColor: '#ccc',
+                     borderWidth: 1,
+                     borderRadius: 8,
+                     padding: 12,
+                  }}
+               >
+                  <View style={{ width: 32 }}>
+                     {currentQuote === text.trim() && text.trim() !== '' && (
+                     <Icon name="check" size={20} color="#333" />
+                     )}
+                  </View>
+                  <TextInput
+                     style={{ flex: 1, fontSize: 14 }}
+                     maxLength={20}
+                     placeholder="직접 입력해보세요"
+                     value={text}
+                     onChangeText={setText}
+                     onSubmitEditing={() => {
+                     if (text.trim()) {
+                        setSelectedQuote(text.trim());
+                        Tts.speak(text.trim());
+                     }
+                     }}
+                  />
+               </View>
+
+               {/* 글자 수 카운터 */}
+               <View style={{ alignItems: 'flex-end', marginTop: 4, paddingRight: 4 }}>
+                  <CustomText style={{ fontSize: 13, color: '#888', marginRight:10, marginTop:3 }}>
+                     {text.length} / 20
+                  </CustomText>
+               </View>
+               </View>
+
             </View>
             </ScrollView>
          </View>

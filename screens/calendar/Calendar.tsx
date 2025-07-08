@@ -98,6 +98,27 @@ const Calendar = ({ navigation }) => {
 
 	return (
 		<Container>
+			{/* {isCamera
+			?<>
+			<View style={{display:'flex',width:'100%', flex:1, justifyContent:'center', alignItems:'center'}}>
+								{device &&
+									<Camera
+										ref={cameraRef}
+										style={{flex:1, width:'100%'}}
+										device={device}
+										isActive={true}
+										photo={true}
+										video={false}
+										audio={false}
+									/>
+								}
+								<Button title="📸 촬영" onPress={takePhoto} />
+							</View>
+			</>
+			:<>기존 캘린더공간</>
+			}
+			<>
+			</> */}
 			<View style={{display:'flex', width:'100%', paddingLeft:'5%', paddingRight:'5%', paddingTop:'40%', flex:1}}>
 				<ViewShot ref={calendarRef}>
 					<CalendarComponent
