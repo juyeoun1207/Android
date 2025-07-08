@@ -133,7 +133,7 @@ const Calendar = ({ navigation }) => {
 						audio={false}
 					/>
 				}
-				<Button title="📸 촬영" onPress={() => setIsCamera(false)} />
+				<Button title="📸 촬영" onPress={() => takephoto()} />
 			</View>
 			</> )
 			:
@@ -236,7 +236,7 @@ const Calendar = ({ navigation }) => {
 								style={{ width: 100, height: 100, marginHorizontal: 0 }}
 								resizeMode="contain"
 							/>
-						:	<TouchableOpacity onPress={() => takePhoto()}>
+						:	<TouchableOpacity onPress={() => setIsCamera(true)}>
 								<View
 									style={{
 										width: 250,

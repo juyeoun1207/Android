@@ -26,7 +26,10 @@ const Settings = ({ navigation }) => {
 					<CustomText style={styles.settingText}>소리 설정</CustomText>
 					<Switch
 						value={soundType === 'on'}
-						onValueChange={(value) => setSoundType(value ? 'on' : 'off')}
+						onValueChange={(value) => {
+							await notifee.deleteChannel('alarm_channel_id');
+							setSoundType(value ? 'on' : 'off')
+						}}
 						trackColor={{ false: '#ccc', true: '#65C466'}}
 						thumbColor={soundType === 'on' ? "#fff" : "#f4f3f4"}
 					/>

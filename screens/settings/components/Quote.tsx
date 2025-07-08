@@ -36,11 +36,11 @@ const Quote = ({ navigation }) => {
    const [text, setText] = useState('')
 
    return (
-	<KeyboardAvoidingView 
-		style={{flex:1}}
-		behavior={'height'}
-		keyboardVerticalOffset={0}
-	>
+		<KeyboardAvoidingView 
+			style={{flex:1}}
+			behavior={'height'}
+			keyboardVerticalOffset={0}
+		>
 			<Container>
 				<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
 
@@ -54,7 +54,6 @@ const Quote = ({ navigation }) => {
             <ScrollView contentContainerStyle={{flexGrow:1, paddingBottom:20}}>
 					<View>
 						<CustomText style={{fontSize:20, marginBottom:15}}>기본 글귀</CustomText>
-
             {defaultQuotes.map((item, index) => (
             <Pressable
                key={index}

@@ -35,7 +35,7 @@ const Loading = ({ navigation }) => {
 	const createChannel = async() => {
 		if(!currentChannel){
 			setCurrentChannel('alarm')
-			await createAlarm('alarm', 'default_alarm', 'alarmexample1')
+			await createAlarm('alarm', 'default_alarm', 'alarmexample1', true)
 		}
 		setLoading(false)
 	}

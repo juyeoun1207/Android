@@ -13,12 +13,16 @@ export async function showOveruseAlarm(appName) {
     },
   });
 }
-export async function createAlarm(channel_id, name, sound){
+export async function deleteAlarm(){
+	await notifee.deleteChannel('alarm');
+}
+export async function createAlarm(channel_id, name, sound, vibration){
 	await notifee.createChannel({
 		id: channel_id,
 		name: name,
 		importance: AndroidImportance.HIGH,
-		sound: sound
+		sound: sound,
+		vibration: vibration
 	});
 }
 export async function executeAlarm(id, appName, pkgName){
