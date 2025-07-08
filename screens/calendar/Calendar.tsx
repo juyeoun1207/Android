@@ -129,45 +129,53 @@ const Calendar = ({ navigation }) => {
 						// const key = date.dateString;
 						// const path = photoMap[key];
 						const key = 'day' + date.day; // 'YYYY-MM-DD'
-						const path = photoMap?.[key]?.filter(e => e.path)?.[0]?.path || '';
-						const isFailed = failedDates[key];
+						const items = photoMap?.[key]?.filter(e => e.path) 
+						const path = items?.[0]?.path || '';
+						const isFailed = !!!path && ((new Date(date.dateString).getMonth() == new Date().getMonth()) && (Number(date.day) < Number(new Date().getDate())));
 
 						return (
 							<View
-							key={key}
-							style={{
-								backgroundColor: 'white',
-								width: 30,
-								height: 45,
-								alignItems: 'center',
-							}}
+								key={key}
+								style={{
+									backgroundColor: 'white',
+									width: 30,
+									height: 45,
+									alignItems: 'center',
+								}}
 							>
 							<TouchableOpacity
 								disabled={state === 'disabled' || isFailed} // 실패 날짜는 비활성화
 								onPress={() => {
-								if (!isFailed) {
-									setSelectedDate(date);
-									setModalVisible(true);
-								}
+									if (!isFailed) {
+										setSelectedDate(date);
+										setModalVisible(true);
+										setSelectedImages(items || []);
+									}
 								}}
 							>
 								{/* 날짜 숫자 */}
 								<Text style={[marking?.todayStyle, { fontSize: 10, marginBottom: 2, textAlign:'center' }]}>
-								{date.day}
+									{date.day}
 								</Text>
 
 								{/* 이미지 또는 실패 텍스트 */}
-								{path ? (
-								<Image
-									source={{ uri: 'file://' + path }}
-									style={{ width: 30, height: 30, borderRadius: 5 }}
-									resizeMode="contain"
-								/>
-								) : isFailed ? (
-								<Text style={{...styles.text, marginTop:2, fontSize: 15, color: 'red' }}>
-									실패
-								</Text>
-								) : null}
+								{path 
+								? 	<Image
+										source={{ uri: 'file://' + path }}
+										style={{ width: 30, height: 30, borderRadius: 5 }}
+										resizeMode="contain"
+									/>
+								:	isFailed 
+									?	<>
+											<Text style={{...styles.text, marginTop:2, fontSize: 15, color: '#C51212' }}>
+												실
+											</Text>
+											<Text style={{...styles.text,marginTop:-2, fontSize: 15, color: '#C51212' }}>
+												패
+											</Text>
+										</>
+									: null
+								}
 							</TouchableOpacity>
 							</View>
 						);
@@ -178,7 +186,7 @@ const Calendar = ({ navigation }) => {
 					<CustomText style={{color:'#818181', marginRight:5}}>이미지 다운로드</CustomText>
 					<Icon name="download" size={24} color="#818181"/>
 				</Pressable>
-				{image && <Image source={{uri: image}} style={{height:200, width:200}}/>}
+				{/* {image && <Image source={{uri: image}} style={{height:200, width:200}}/>} */}
 			</View>
 			<Modal
 				isVisible={modalVisible}
@@ -192,47 +200,47 @@ const Calendar = ({ navigation }) => {
 					<View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
 						<TouchableOpacity
-						disabled={currentImageIndex === 0}
-						onPress={() => setCurrentImageIndex(currentImageIndex - 1)}
-						style={{ padding: 10 }}
+							disabled={currentImageIndex === 0}
+							onPress={() => setCurrentImageIndex(currentImageIndex - 1)}
+							style={{ padding: 10 }}
 						>
-						<Icon
-							name="arrow-left"
-							size={24}
-							color={currentImageIndex === 0 ? '#ccc' : '#000'}
-						/>
+							<Icon
+								name="arrow-left"
+								size={24}
+								color={currentImageIndex === 0 ? '#ccc' : '#000'}
+							/>
 						</TouchableOpacity>
-
-						{/* <Image
-						source={selectedImages[currentImageIndex]}
-						style={{ width: 270, height: 300, marginHorizontal: 0 }}
-						resizeMode="contain"
-						/> */}
-
-						<View
-						style={{
-							width: 250,
-							height: 250,
-							borderColor: '#888',
-							borderWidth: 1,
-							justifyContent: 'center',
-							alignItems: 'center',
-							borderRadius: 12,
-							marginTop:20,
-							marginBottom:25
-						}}
-						>
-						<Image
-							source={require('../../assets/images/ImageIcon.png')}
-							style={{ width: 100, height: 100, marginBottom:25 }}
-						/>
-						<CustomText style={{ fontSize: 20, color: '#888' }}>이미지 업로드하기</CustomText>
-						</View>
+						{selectedImages.length > 0
+						?	<Image
+								source={{ uri: 'file://' + selectedImages[currentImageIndex].path}}
+								style={{ width: 100, height: 100, marginHorizontal: 0 }}
+								resizeMode="contain"
+							/>
+						:	<View
+								style={{
+									width: 250,
+									height: 250,
+									borderColor: '#888',
+									borderWidth: 1,
+									justifyContent: 'center',
+									alignItems: 'center',
+									borderRadius: 12,
+									marginTop:20,
+									marginBottom:25
+								}}
+							>
+								<Image
+									source={require('../../assets/images/ImageIcon.png')}
+									style={{ width: 100, height: 100, marginBottom:25 }}
+								/>
+								<CustomText style={{ fontSize: 20, color: '#888' }}>이미지 업로드하기</CustomText>
+							</View>
+						}
 
 						<TouchableOpacity
-						disabled={currentImageIndex === selectedImages.length - 1}
-						onPress={() => setCurrentImageIndex(currentImageIndex + 1)}
-						style={{ padding: 10 }}
+							disabled={currentImageIndex === selectedImages.length - 1}
+							onPress={() => setCurrentImageIndex(currentImageIndex + 1)}
+							style={{ padding: 10 }}
 						>
 						<Icon
 							name="arrow-right"

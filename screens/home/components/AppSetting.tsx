@@ -70,13 +70,14 @@ const AppSetting = ({ navigation }) => {
 
 						<CustomText style={{fontSize:20, marginTop:30, marginBottom:15}}>이번 주 리포트</CustomText>
 						{week.map((item, index) => (
-						<Pressable
-							key={index}
-							style={{...styles.settingBox, flexDirection: 'row', alignItems: 'center', marginBottom: 8}}>
-								<CustomText style={{fontSize: 15}}>
-								{item.name} : {item.state == 'success' ? '성공!' : (item.state == 'fail' ? '실패..' : (item.state == 'not_alarmed' ? '적용 안함' : ''))}
-								</CustomText>
-						</Pressable>
+							<Pressable
+								key={index}
+								style={{...styles.settingBox, flexDirection: 'row', alignItems: 'center', marginBottom: 8}}
+							>
+									<CustomText style={{fontSize: 15}}>
+										{item.name} : {item.state == 'success' ? '성공!' : (item.state == 'fail' ? '실패..' : (item.state == 'not_alarmed' ? '적용 안함' : ''))}
+									</CustomText>
+							</Pressable>
 						))}
 					</View>
 					</ScrollView>

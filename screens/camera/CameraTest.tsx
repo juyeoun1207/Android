@@ -35,10 +35,8 @@ const CameraTest = ({navigation}) => {
 	const device = devices?.find(e => e.position == 'back')
 	const setTabType = tabTypeZustand((state) => state.setTabType)
 	const takePhoto = async() => {
-		console.log('start photo', cameraRef.current)
 		let photoArr = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}
 		let objectKey = 'day' + new Date().getDate()
-		console.log(cameraRef.current, pkg, photoArr, objectKey);
 		if(cameraRef.current == null || !pkg) return;
 		const photo = await cameraRef.current.takePhoto({});
 		const dateKey = new Date().toISOString().split('T')[0];

@@ -51,7 +51,7 @@ const Quote = ({ navigation }) => {
 					<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
 						<CustomText style={{ fontSize: 30 }}>글귀 설정</CustomText>
 					</View>
-            <ScrollView contentContainerStyle={{flexGrow:1}}>
+            <ScrollView contentContainerStyle={{flexGrow:1, paddingBottom:20}}>
 					<View>
 						<CustomText style={{fontSize:20, marginBottom:15}}>기본 글귀</CustomText>
 
@@ -120,45 +120,43 @@ const Quote = ({ navigation }) => {
             </View>
 
             <CustomText style={{fontSize:20, marginTop:50, marginBottom:15}}>직접 설정</CustomText>
-               <View style={{ marginBottom: 8 }}>
                {/* 입력 박스 */}
-               <View
-                  style={{
-                     flexDirection: 'row',
-                     alignItems: 'center',
-                     borderColor: '#ccc',
-                     borderWidth: 1,
-                     borderRadius: 8,
-                     padding: 12,
-                  }}
-               >
-                  <View style={{ width: 32 }}>
-                     {currentQuote === text.trim() && text.trim() !== '' && (
-                     <Icon name="check" size={20} color="#333" />
-                     )}
-                  </View>
-                  <TextInput
-                     style={{ flex: 1, fontSize: 14 }}
-                     maxLength={20}
-                     placeholder="직접 입력해보세요"
-                     value={text}
-                     onChangeText={setText}
-                     onSubmitEditing={() => {
-                     if (text.trim()) {
-                        setSelectedQuote(text.trim());
-                        Tts.speak(text.trim());
-                     }
-                     }}
-                  />
-               </View>
-
-               {/* 글자 수 카운터 */}
-               <View style={{ alignItems: 'flex-end', marginTop: 4, paddingRight: 4 }}>
-                  <CustomText style={{ fontSize: 13, color: '#888', marginRight:10, marginTop:3 }}>
-                     {text.length} / 20
-                  </CustomText>
-               </View>
-               </View>
+			<View
+				style={{
+					flexDirection: 'row',
+					alignItems: 'center',
+					borderColor: '#ccc',
+					borderWidth: 1,
+					borderRadius: 8,
+					padding: 12,
+					height:50
+				}}
+			>
+				<View style={{ width: 32, height:'100%' }}>
+					{currentQuote === text.trim() && text.trim() !== '' && (
+					<Icon name="check" size={20} color="#333" />
+					)}
+				</View>
+				<TextInput
+					style={{height:50,fontSize: 14 }}
+					maxLength={20}
+					placeholder="직접 입력해보세요"
+					value={text}
+					onChangeText={setText}
+					onSubmitEditing={() => {
+						if (text.trim()) {
+							setSelectedQuote(text.trim());
+							Tts.speak(text.trim());
+						}
+					}}
+				/>
+			</View>
+			{/* 글자 수 카운터 */}
+			<View style={{ alignItems: 'flex-end'}}>
+				<CustomText style={{ fontSize: 13, color: '#888', marginRight:5}}>
+					{text.length} / 20
+				</CustomText>
+			</View>
 
             </View>
             </ScrollView>
