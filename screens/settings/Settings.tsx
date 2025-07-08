@@ -5,71 +5,79 @@ import Container from '../../components/Container'
 import CustomText from '../../components/CustomText';
 import Footer from '../../components/Footer'
 import useQuoteZustand from '../../store/useQuote';
-
+import {deleteAlarm, createAlarm} from '../../utils/handleAlarm'
 const Settings = ({ navigation }) => {
-  const soundType = soundTypeZustand((state) => state.soundType);
-  const setSoundType = soundTypeZustand((state) => state.setSoundType);
-  const vibrationType = vibrationTypeZustand((state) => state.vibrationType);
-  const setVibrationType = vibrationTypeZustand((state) => state.setVibrationType);
-  const currentQuote = useQuoteZustand((state) => state.selectedQuote);
-  const quoteList = useQuoteZustand((state) => state.quoteList);
-  const selectedQuoteObj = quoteList.find((q) => q.text === currentQuote);
-
-  return (
-    <Container>
-      	<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
-        	<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
-          	<CustomText style={{ fontSize: 30 }}>알림 설정</CustomText></View>
-			
-			<View style={{gap: 16}}>
-          		<View style={styles.settingBoxRow}>
-					<CustomText style={styles.settingText}>소리 설정</CustomText>
-					<Switch
-						value={soundType === 'on'}
-						onValueChange={(value) => {
-							await notifee.deleteChannel('alarm_channel_id');
-							setSoundType(value ? 'on' : 'off')
-						}}
-						trackColor={{ false: '#ccc', true: '#65C466'}}
-						thumbColor={soundType === 'on' ? "#fff" : "#f4f3f4"}
-					/>
-				</View>
-          		<View style={styles.settingBoxRow}>
-					<CustomText style={styles.settingText}>진동 설정</CustomText>
-					<Switch
-						value={vibrationType === 'on'}
-						onValueChange={(value) => setVibrationType(value ? 'on' : 'off')}
-						trackColor={{false:"#ccc", true:"#65C466"}}
-						thumbColor={vibrationType === 'on' ? "#fff" : "#f4f3f4"}
-					/>
-				</View>
-				<Pressable 
-					onPress={() => {navigation.navigate('Quote')}} 
-					style={styles.settingBox}
-				>
-					<CustomText style={styles.settingText}>글귀 설정</CustomText>
-				</Pressable>
+	const soundType = soundTypeZustand((state) => state.soundType);
+	const setSoundType = soundTypeZustand((state) => state.setSoundType);
+	const vibrationType = vibrationTypeZustand((state) => state.vibrationType);
+	const setVibrationType = vibrationTypeZustand((state) => state.setVibrationType);
+	const currentQuote = useQuoteZustand((state) => state.selectedQuote);
+	const quoteList = useQuoteZustand((state) => state.quoteList);
+	const selectedQuoteObj = quoteList.find((q) => q.text === currentQuote);
+	const regenerateAlarmBySound = async(value) => {
+		await deleteAlarm()
+		await createAlarm('alarm', 'alarm_name', value === 'on' ? 'alarmexample1' : null, vibrationType === 'on')
+		setSoundType(value ? 'on' : 'off')
+	}
+	const regenerateAlarmByVibration = async(value) => {
+		await deleteAlarm()
+		await createAlarm('alarm', 'alarm_name', soundType === 'on' ? 'alarmexample1' : null, value === 'on')
+		setVibrationType(value ? 'on' : 'off')
+	}
+	return (
+		<Container>
+			<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
+				<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
+				<CustomText style={{ fontSize: 30 }}>알림 설정</CustomText></View>
 				
-				<CustomText style={{...styles.settingText, marginTop:10}}>현재 글귀</CustomText>
-        <View style={styles.selectedQuoteBox}>
-          <View>
-            <CustomText style={styles.selectedQuoteText}>{currentQuote}</CustomText>
-          </View>
-        </View>
-        {selectedQuoteObj && (
-          <View style={{alignItems: 'flex-end', marginTop: -10, marginRight: 15}}>
-            <CustomText style={{fontSize: 12, color: '#666'}}>
-              {selectedQuoteObj.type} ({selectedQuoteObj.name})
-            </CustomText>
-          </View>
-        )}
-
-        
+				<View style={{gap: 16}}>
+					<View style={styles.settingBoxRow}>
+						<CustomText style={styles.settingText}>소리 설정</CustomText>
+						<Switch
+							value={soundType === 'on'}
+							onValueChange={(value) => {
+								regenerateAlarmBySound(value)
+							}}
+							trackColor={{ false: '#ccc', true: '#65C466'}}
+							thumbColor={soundType === 'on' ? "#fff" : "#f4f3f4"}
+						/>
+					</View>
+					<View style={styles.settingBoxRow}>
+						<CustomText style={styles.settingText}>진동 설정</CustomText>
+						<Switch
+							value={vibrationType === 'on'}
+							onValueChange={(value) => regenerateAlarmByVibration(value)}
+							trackColor={{false:"#ccc", true:"#65C466"}}
+							thumbColor={vibrationType === 'on' ? "#fff" : "#f4f3f4"}
+						/>
+					</View>
+					<Pressable 
+						onPress={() => {navigation.navigate('Quote')}} 
+						style={styles.settingBox}
+					>
+						<CustomText style={styles.settingText}>글귀 설정</CustomText>
+					</Pressable>
+					
+					<CustomText style={{...styles.settingText, marginTop:10}}>현재 글귀</CustomText>
+			<View style={styles.selectedQuoteBox}>
+			<View>
+				<CustomText style={styles.selectedQuoteText}>{currentQuote}</CustomText>
 			</View>
-		</View>
-		<Footer navigation={navigation}/>
-    </Container>
-  );
+			</View>
+			{selectedQuoteObj && (
+			<View style={{alignItems: 'flex-end', marginTop: -10, marginRight: 15}}>
+				<CustomText style={{fontSize: 12, color: '#666'}}>
+				{selectedQuoteObj.type} ({selectedQuoteObj.name})
+				</CustomText>
+			</View>
+			)}
+
+			
+				</View>
+			</View>
+			<Footer navigation={navigation}/>
+		</Container>
+	);
 }
 
 

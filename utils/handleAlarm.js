@@ -33,6 +33,7 @@ export async function executeAlarm(id, appName, pkgName){
 		body: `${appName} 앱을 너무 오래 사용하고 있어요.`,
 		android: {
 			channelId: 'alarm',
+			vibrationPattern: [0, 500, 200, 500],
 			pressAction: {
 				id: 'camera',
 				launchActivity: 'default',
