@@ -79,7 +79,7 @@ export const getScreentime = async() => {
 }
 const useScreentime = () => {
 	return useQuery({
-		queryKey: ["screentime_limit"],
+		queryKey: ["screentime"],
 		queryFn: getScreentime,
 	});
 }

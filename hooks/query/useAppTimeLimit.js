@@ -7,7 +7,7 @@ export const getAppTimeLimit = async(pkg) => {
 }
 const useAppTimeLimit = ({enabled, pkg}) => {
 	return useQuery({
-		queryKey: ["screentime"],
+		queryKey: ["screentime_limit"],
 		queryFn: () => getAppTimeLimit(pkg),
 		enabled: enabled
 	});
