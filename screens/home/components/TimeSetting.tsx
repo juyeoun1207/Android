@@ -36,6 +36,9 @@ const TimeSetting = ({ navigation }) => {
 		const result = await UsageMonitor.isUsageThresholdSet(appData.pkg)
 		return {list: item, isUsage: !!result}
 	}
+	const checkIsSuccess = async() => {
+		
+	}
 	const removeLimit = async() => {
 		await UsageMonitor.removeUsageThreshold(appData.pkg);
 		let photoArr = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}

@@ -41,7 +41,8 @@ const Settings = ({ navigation }) => {
 						<Switch
 							value={soundType === 'on'}
 							onValueChange={(value) => {
-								if(!loadingHandleSound) mutateHandleSoundType({value, vibrationType, audio: selectedQuoteObj.audio?.replace('.mp3', '') || 'default'})
+								const audioName = selectedQuoteObj?.audio?.replace('.mp3', '') || 'default'
+								if(!loadingHandleSound) mutateHandleSoundType({value, vibrationType, audio: audioName})
 							}}
 							trackColor={{ false: '#ccc', true: '#65C466'}}
 							thumbColor={soundType === 'on' ? "#fff" : "#f4f3f4"}
@@ -52,7 +53,8 @@ const Settings = ({ navigation }) => {
 						<Switch
 							value={vibrationType === 'on'}
 							onValueChange={(value) => {
-								if(!loadingHandleVibration) mutateHandleVibrationType({value, soundType, audio: selectedQuoteObj.audio?.replace('.mp3', '') || 'default'})
+								const audioName = selectedQuoteObj?.audio?.replace('.mp3', '') || 'default'
+								if(!loadingHandleVibration) mutateHandleVibrationType({value, soundType, audio: audioName})
 							}}
 							trackColor={{false:"#ccc", true:"#65C466"}}
 							thumbColor={vibrationType === 'on' ? "#fff" : "#f4f3f4"}
