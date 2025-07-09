@@ -52,15 +52,14 @@ const styles = StyleSheet.create({
 	  
 })
 async function requestPermissions(){
-	console.log('request-permissions')
 	const cameraPermission = await Camera.requestCameraPermission();
 	const microPhonePermission = await Camera.requestMicrophonePermission();
-	if(cameraPermission !== 'authorized'){
-		console.log('카메라 권한 거부됨', cameraPermission);
-	}
-	if(microPhonePermission !== 'authorized'){
-		console.log('마이크 권한 거부됨', microPhonePermission);
-	}
+	// if(cameraPermission !== 'authorized'){
+	// 	console.log('카메라 권한 거부됨', cameraPermission);
+	// }
+	// if(microPhonePermission !== 'authorized'){
+	// 	console.log('마이크 권한 거부됨', microPhonePermission);
+	// }
 	if(Platform.OS === 'android' && Platform.Version >= 33){
 		await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 	}

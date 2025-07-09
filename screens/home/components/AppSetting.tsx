@@ -28,9 +28,9 @@ const AppSetting = ({ navigation }) => {
 			setWeek(data)
 		}
 	})
-	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading: loadingGetInfo} = useScreentime()
+	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading: loadingGetInfo, isFetching} = useScreentime()
 	const appData = item?.appList.find(e => e.pkg == currPkg) || {}
-	const {data: timeLimit = '', isLoading} = useAppTimeLimit({
+	const {data: timeLimit = '', isLoading, isFetching: fetchingLimit} = useAppTimeLimit({
 		pkg: appData?.pkg,
 		enabled: !!appData?.pkg
 	})
@@ -39,9 +39,9 @@ const AppSetting = ({ navigation }) => {
 	},[appData])
 	return (
 		<Container>
-			{(loading || isLoading || loadingGetInfo)
+			{(loading || isLoading || loadingGetInfo || isFetching || fetchingLimit)
 			?	<>
-					<LoadingDog isLoading={loading || isLoading || loadingGetInfo}/>
+					<LoadingDog isLoading={loading || isLoading || loadingGetInfo || isFetching || fetchingLimit}/>
 				</>
 			:	<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
 					<Pressable onPress={() => navigation.navigate('Home')}>

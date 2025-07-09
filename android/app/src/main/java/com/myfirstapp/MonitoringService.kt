@@ -87,12 +87,10 @@ class MonitoringService : Service() {
     }
 
     override fun onCreate() {
-		Log.e("MONITOR", "MonitoringService onCreate 호출됨")
 		try {
 			usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 			startForegroundNotification()
 			handler.post(runnable)
-			Log.e("MONITOR", "Service 초기화 완료")
 		} catch (e: Exception) {
 			Log.e("MONITOR", "onCreate에서 예외 발생: ${e.message}", e)
 		}
@@ -118,10 +116,8 @@ class MonitoringService : Service() {
     }
 
     private fun checkUsage() {
-        Log.e("MonitoringService", "checkUsage called")
 		val now = System.currentTimeMillis()
 		if (now - lastAlertReset > 24 * 60 * 60 * 1000) {
-            Log.e("MonitoringService", "알림 상태 초기화됨")
             alertedApps.clear()
             lastAlertReset = now
         }
@@ -133,11 +129,9 @@ class MonitoringService : Service() {
 		for (usage in stats) {
 			val pkg = usage.packageName
 			val time = usage.totalTimeInForeground
-			Log.e("MonitoringService", "App: $pkg, Time: $time")
 
 			val limitSeconds = prefs.getInt(pkg, -1)
 			if (limitSeconds != -1 && time > limitSeconds * 1000L && !alertedApps.contains(pkg)) {
-                Log.e("MonitoringService", "Overuse detected: $pkg")
 				alertedApps.add(pkg)
                 triggerAlert(pkg)
             }
@@ -151,7 +145,6 @@ class MonitoringService : Service() {
     }
 
     private fun triggerAlert(pkg: String) {
-		Log.e("MonitoringService", "Triggering alert for $pkg")
     	//val appName = getAppNameFromPackage(pkg)
     	//showOveruseNotification(pkg, appName)
         val appName = getAppNameFromPackage(pkg)

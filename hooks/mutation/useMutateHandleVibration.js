@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import {deleteAlarm, createAlarm} from '../../utils/handleAlarm'
 const handleVibrationType = async({value, soundType, audio}) => {
 	await deleteAlarm()
-	await createAlarm('alarm', soundType === 'on' ? audio : 'default', value)
+	await createAlarm(soundType === 'on' ? audio : 'default', value)
 	await AsyncStorage.setItem('vibration_type', value ? 'on' : 'off')
 	return {value}
 }

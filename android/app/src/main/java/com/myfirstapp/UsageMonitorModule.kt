@@ -26,11 +26,9 @@ class UsageMonitorModule(reactContext: ReactApplicationContext) : ReactContextBa
 
     @ReactMethod
     fun startMonitoring() {
-    	Log.e("MONITOR_MODULE", "startMonitoring 호출됨")
 		try {
 			val intent = Intent(reactApplicationContext, MonitoringService::class.java)
 			reactApplicationContext.startForegroundService(intent)
-			Log.e("MONITOR_MODULE", "MonitoringService 실행 요청 완료")
 		} catch (e: Exception) {
 			Log.e("MONITOR_MODULE", "startMonitoring 실패: ${e.message}", e)
 		}
@@ -79,7 +77,6 @@ class UsageMonitorModule(reactContext: ReactApplicationContext) : ReactContextBa
 	fun resetAlertedApps() {
 		try {
 			MonitoringService.resetAlertedApps()
-			Log.e("USAGE_MONITOR", "alertedApps 초기화 성공")
 		} catch (e: Exception) {
 			Log.e("USAGE_MONITOR", "alertedApps 초기화 실패: ${e.message}", e)
 		}
@@ -88,7 +85,6 @@ class UsageMonitorModule(reactContext: ReactApplicationContext) : ReactContextBa
 	fun resetAlertedApp(packageName: String) {
 		try {
 			MonitoringService.resetAlertedApp(packageName)
-			Log.e("USAGE_MONITOR", "$packageName 알림 기록 초기화 성공")
 		} catch (e: Exception) {
 			Log.e("USAGE_MONITOR", "$packageName 알림 기록 초기화 실패: ${e.message}", e)
 		}

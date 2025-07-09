@@ -20,12 +20,10 @@ const Stack = createNativeStackNavigator();
 const App = () => {
 	useEffect(() => {
 		return notifee.onForegroundEvent(async({type, detail}) => {
-			console.log('on_foreground')
 			if (
 			  (type === EventType.ACTION_PRESS || type === EventType.PRESS) &&
 			  detail.pressAction?.id === 'camera'
 			) {
-			  console.log('forground_executed')
 			  const alarmId = detail.notification?.data?.alarm_id;
 				const appName = detail.notification?.data?.app_name;
 				const pkgName = detail.notification?.data?.pkg_name;

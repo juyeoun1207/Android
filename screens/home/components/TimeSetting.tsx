@@ -15,13 +15,11 @@ import useScreentime from '../../../hooks/query/useScreentime'
 import {monthObj} from '../../../utils/listItem'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 async function requestPermissions() {
-	console.log('start_permissions1')
 	if (Platform.OS === 'android' && Platform.Version >= 33) {
-		console.log('can_permissions1')
 		const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-		if(granted !== PermissionsAndroid.RESULTS.GRANTED){
-			console.log('알림 권한 거부됨');
-		}
+		// if(granted !== PermissionsAndroid.RESULTS.GRANTED){
+		// 	console.log('알림 권한 거부됨');
+		// }
 	}
 }
 const TimeSetting = ({ navigation }) => {
@@ -72,9 +70,9 @@ const TimeSetting = ({ navigation }) => {
 			setIsSuccess(data.isSuccess)
 		}
 	})
-	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading: loadingGetInfo} = useScreentime()
+	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading: loadingGetInfo, isFetching} = useScreentime()
 	const appData = item?.appList.find(e => e.pkg == currPkg) || {}
-	const {data: timeLimit = '', isLoading: loadingTimeLimit} = useAppTimeLimit({
+	const {data: timeLimit = '', isLoading: loadingTimeLimit, isFetching:fetchingLimit} = useAppTimeLimit({
 		pkg: appData?.pkg,
 		enabled: !!appData?.pkg
 	})
@@ -94,9 +92,9 @@ const TimeSetting = ({ navigation }) => {
 
   return (
     <Container>
-		{(loading || isLoading || loadingTimeLimit || loadingGetInfo)
+		{(loading || isLoading || loadingTimeLimit || loadingGetInfo || isFetching || fetchingLimit)
 		?	<>
-				<LoadingDog isLoading={loading || isLoading || loadingTimeLimit || loadingGetInfo}/>
+				<LoadingDog isLoading={loading || isLoading || loadingTimeLimit || loadingGetInfo || isFetching || fetchingLimit}/>
 			</>
 		:	<View style={{ flex:1, padding:'10%', width:'100%', backgroundColor:'#fff' }}>
 				<Pressable onPress={() => navigation.navigate('AppSetting')}>

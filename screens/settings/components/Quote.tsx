@@ -18,7 +18,7 @@ const playQuoteAudio = (fileName) => {
 };
 
 const Quote = ({ navigation }) => {
-   const quoteList = useQuoteZustand((state) => state.quoteList);
+   	const quoteList = useQuoteZustand((state) => state.quoteList);
 	const defaultQuotes = quoteList.filter((item) => item.type === '기본');
 	const currentQuote = useQuoteZustand((state) => state.selectedQuote);
 	const setSelectedQuote = useQuoteZustand((state) => state.setSelectedQuote);

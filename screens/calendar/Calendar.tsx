@@ -352,10 +352,10 @@ const Calendar = ({ navigation }) => {
 							/>
 						</TouchableOpacity>}
 						{selectedImages?.length > 0 && 
-						<View style={{marginTop:10}}>
+						<View style={{marginTop:10, marginBottom:25}}>
 							<CustomText>{selectedImages[currentImageIndex]?.app + ' 디톡스 - ' + selectedImages[currentImageIndex]?.time}</CustomText>
 						</View>}
-						<TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 25 , width:100, borderWidth:1, borderColor:'#a9a9a9', borderRadius:8, paddingTop:10, paddingBottom:10, alignItems:'center'}}>
+						<TouchableOpacity onPress={() => setModalVisible(false)} style={{ width:100, borderWidth:1, borderColor:'#a9a9a9', borderRadius:8, paddingTop:10, paddingBottom:10, alignItems:'center'}}>
 							<CustomText style={{ fontSize: 15, marginTop:0 }}>닫기</CustomText>
 						</TouchableOpacity>
 					</View>

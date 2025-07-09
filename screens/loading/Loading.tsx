@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import currentChannelZustand from '../../store/currentChannel'
 import {createAlarm} from '../../utils/handleAlarm'
 import useQuoteZustand from '../../store/useQuote';
+import generateId from '../../utils/generateId'
 import {checkNotificationFlag} from '../../utils/checkNotificationFlag'
 const styles = StyleSheet.create({
 	container: {
@@ -29,7 +30,6 @@ const Loading = ({ navigation }) => {
 	const [loading, setLoading] = useState(true)
 	const setTabType = tabTypeZustand((state) => state.setTabType)
 	const currentChannel = currentChannelZustand(state => state.currentChannel)
-	const setCurrentChannel = currentChannelZustand(state => state.setCurrentChannel)
 	const setSoundType = soundTypeZustand((state) => state.setSoundType);
 	const setVibrationType = vibrationTypeZustand((state) => state.setVibrationType);
 	const setSelectedQuote = useQuoteZustand((state) => state.setSelectedQuote);
@@ -46,8 +46,7 @@ const Loading = ({ navigation }) => {
 	}
 	const createChannel = async() => {
 		if(!currentChannel){
-			setCurrentChannel('alarm')
-			await createAlarm('alarm','default', true)
+			await createAlarm('default', true)
 		}
 		setLoading(false)
 	}

@@ -1,6 +1,9 @@
 import notifee, {AndroidImportance, EventType, TriggerType, TimestampTrigger} from '@notifee/react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {monthObj} from '../utils/listItem'
+import currentChannelZustand from '../store/currentChannel';
+import useQuoteZustand from '../store/useQuote';
+import generateId from './generateId';
 export async function showOveruseAlarm(appName) {
   await notifee.displayNotification({
     title: '⚠️ 사용시간 초과',
@@ -14,9 +17,12 @@ export async function showOveruseAlarm(appName) {
   });
 }
 export async function deleteAlarm(){
-	await notifee.deleteChannel('alarm');
+	const id = currentChannelZustand.getState().currentChannel
+	await notifee.deleteChannel(id);
 }
-export async function createAlarm(channel_id, sound, vibration){
+export async function createAlarm(sound, vibration){
+	const channel_id = generateId()
+	currentChannelZustand.getState().setCurrentChannel(channel_id)
 	await notifee.createChannel({
 		id: channel_id,
 		name: '잔소리 알람',
@@ -26,13 +32,14 @@ export async function createAlarm(channel_id, sound, vibration){
 	});
 }
 export async function executeAlarm(id, appName, pkgName){
-	console.log('executeAlarm')
+	const channelId = currentChannelZustand.getState().currentChannel
+	const quotes = useQuoteZustand.getState().selectedQuote
 	await notifee.displayNotification({
 		id: id,
-		title: '⚠️ 사용시간 초과',
-		body: `${appName} 앱을 너무 오래 사용하고 있어요.`,
+		title: `⚠️ ${appName} 사용시간 초과`,
+		body: quotes,
 		android: {
-			channelId: 'alarm',
+			channelId: channelId,
 			pressAction: {
 				id: 'camera',
 				launchActivity: 'default',
@@ -59,7 +66,6 @@ export async function executeAlarm(id, appName, pkgName){
 			pkg_name: pkgName
 		}
 	});
-	console.log('finished_execute')
 	let photoArr = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}
 	let objectKey = 'day' + new Date().getDate()
 	const findIndex = photoArr[objectKey].findIndex(e => e.pkg == pkgName)
@@ -67,7 +73,6 @@ export async function executeAlarm(id, appName, pkgName){
 		photoArr[objectKey].push({pkg: pkgName, date: '', path: '', app: appName})
 		await AsyncStorage.setItem(`month-photo`, JSON.stringify(photoArr));
 	}
-	console.log('execute finished')
 }
 export async function scheduleAlarm() {
 	// 알림 채널 생성

@@ -26,18 +26,7 @@ import useScreentime from '../../hooks/query/useScreentime'
 //   ]
 const weekTypeList = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 const screenHeight = Dimensions.get('window').height;
-async function requestPermissions1() {
-	console.log('start_permissions1')
-	if (Platform.OS === 'android' && Platform.Version >= 33) {
-		console.log('can_permissions1')
-		const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-		if(granted !== PermissionsAndroid.RESULTS.GRANTED){
-			console.log('알림 권한 거부됨');
-		}
-	}
-}
 async function requestPermissions2() {
-	console.log('start_permissions2')
     const permissions = [
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
@@ -47,101 +36,8 @@ async function requestPermissions2() {
       granted[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] !== PermissionsAndroid.RESULTS.GRANTED &&
       granted[PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION] !== PermissionsAndroid.RESULTS.GRANTED
     ) {
-      console.warn('위치 권한이 거부됨');
     }
 }
-async function scheduleAlarm2(){
-	console.log('start')
-	await notifee.displayNotification({
-		title: '📷 행동 기록하자!',
-		body: '지금 행동을 기록할 시간이에요.',
-		android: {
-		  channelId: 'alarm',
-		  sound:'default'
-		},
-	  });
-	  console.log('finished')
-} 
-async function scheduleAlarm3(){
-	console.log('start')
-	await notifee.displayNotification({
-		id:'123',
-		title: '📷 행동 기록하자!',
-		body: '지금 행동을 기록할 시간이에요.',
-		android: {
-		  channelId: 'alarm',
-		//   style: {
-		// 	type: AndroidStyle.BIGPICTURE,
-		// 	picture: '../../assets/images/loading-dog',
-		//   },
-		  actions: [
-			{
-			  title: '바로 기록하기',
-			  pressAction: {
-				id: 'camera',
-			  },
-			},
-			{
-			  title: '나중에 할래요',
-			  pressAction: {
-				id: 'later',
-			  },
-			},
-		  ],
-		},
-	  });
-	  console.log('finished')
-} 
-async function scheduleAlarm() {
-	console.log('start')
-	// 알림 채널 생성
-	await notifee.createChannel({
-	id: 'alarm',
-	name: 'Alarm Channel',
-	importance: AndroidImportance.HIGH,
-	sound: 'alarmexample1', // 나중에 커스텀 사운드로 대체 가능
-	});
-	console.log('channel_created')
-
-	// 3초 뒤 울리기
-	const date = new Date(Date.now() + 3 * 1000);
-	const trigger: TimestampTrigger = {
-		type: TriggerType.TIMESTAMP,
-		timestamp: date.getTime(),
-		// alarmManager: true, // 애뮬레이터에서는 안됨
-	};
-	// 알림 예약
-	await notifee.createTriggerNotification(
-	{
-		title: '🕒 행동 알람!',
-		body: '지금 행동을 기록하세요.',
-		android: {
-			channelId: 'alarm',
-			pressAction: {
-				id: 'camera', // 클릭 시 앱 열기
-			},
-			sound: 'alarmexample1',
-			actions: [
-				{
-				  title: '바로 기록하기',
-				  pressAction: {
-					id: 'camera',
-				  },
-				},
-				{
-				  title: '나중에 할래요',
-				  pressAction: {
-					id: 'later',
-				  },
-				},
-			],
-		},
-	},
-	trigger
-	);
-	console.log('alarm_reserved')
-}
-
 const Home = ({ navigation }) => {
 	const [weekSuccessRate, setWeekSuccessRate] = useState(0)
 	const setCurrentApp = currentAppZustand(state => state.setCurrentApp)
@@ -163,7 +59,7 @@ const Home = ({ navigation }) => {
 			setWeekSuccessRate(data)
 		}
 	})
-	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading} = useScreentime()
+	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading, isFetching} = useScreentime()
 	useEffect(() => {
 		mutateGetWeekSuccessRate()
 	},[])
@@ -173,9 +69,8 @@ const Home = ({ navigation }) => {
 	
 		  try {
 			await UsageMonitor.startMonitoring();
-			console.log('[✓] MonitoringService 시작됨');
 		  } catch (e) {
-			console.error('[X] MonitoringService 시작 실패:', e);
+			// console.error('[X] MonitoringService 시작 실패:', e);
 		  }
 		})();
 	  }, []); // 모니터링 해서 알림 호출
@@ -190,16 +85,16 @@ const Home = ({ navigation }) => {
 	// },[]) // 알림 호출 후 카메라로 이동
 	return (
 		<>
-		{(isLoading || loadingWeekRate)
+		{(isLoading || loadingWeekRate || isFetching)
 		?	<Container>
-				<LoadingDog isLoading={isLoading || loadingWeekRate}/>
+				<LoadingDog isLoading={isLoading || loadingWeekRate || isFetching}/>
 			</Container>
 		:	<View style={{minHeight: screenHeight, backgroundColor:'#fff', position:'relative'}}>
 				<View style={{paddingBottom:10, position:'absolute', zIndex:10, top:0, backgroundColor:"#fff", paddingTop:20, width:'100%', alignItems:'center', display:'flex', paddingLeft:'10%', paddingRight:'10%'}}>
 					<CustomText style={{fontSize:25, marginTop:20, marginBottom:30}}>이번주 성공률: {weekSuccessRate}%</CustomText>
 					<View style={{borderWidth:1, paddingTop:5, borderColor:'#000'}}>
 						<View style={{marginBottom:10, alignItems:'center'}}>
-							<CustomText>{`이번주 평균 사용시간 : ${item?.weekList.filter(e => e.time > 0).length > 0 ? formatSecondsToHM(item?.weekList.filter(e => e.time > 0).reduce((a,b) => a += Number(b.time || 0), 0) / item?.weekList.filter(e => e.time > 0).length) : '0H'}`}</CustomText>
+							<CustomText>{`이번 주 평균 사용시간 : ${item?.weekList.filter(e => e.time > 0).length > 0 ? formatSecondsToHM(item?.weekList.filter(e => e.time > 0).reduce((a,b) => a += Number(b.time || 0), 0) / item?.weekList.filter(e => e.time > 0).length) : '0H'}`}</CustomText>
 						</View>
 						<View style={{width:'100%', flexDirection:'row', height:100, paddingLeft:5, paddingRight: 5, alignItems:'flex-end'}}>
 							{item?.weekList.map((data, index) => {
@@ -240,7 +135,10 @@ const Home = ({ navigation }) => {
 						/>
 					</View> */}
 				</View>
-				<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 1, paddingTop:270, paddingBottom:70}}>
+				<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 1, paddingTop:260, paddingBottom:70}}>
+					<View style={{width:'100%', paddingLeft:25, marginBottom:5}}>
+						<CustomText style={{color:'gray', fontSize:20, textAlign:'left'}}>Today</CustomText>
+					</View>
 					<View style={{display:'flex',width:'100%'}}>
 						<View style={{gap:15}}>
 							{item?.appList.map((data, index) => {
