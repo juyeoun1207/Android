@@ -17,7 +17,11 @@ const Settings = ({ navigation }) => {
 	const selectedQuoteObj = quoteList.find((q) => q.text === currentQuote);
 	const {mutate: mutateHandleSoundType, isLoading: loadingHandleSound} = useMutateHandleSound({
 		onSuccess:(data) => {
+			console.log(data)
 			setSoundType(data.value ? 'on' : 'off')
+		},
+		onError:(err) => {
+			console.log(err)
 		}
 	})
 	const {mutate: mutateHandleVibrationType, isLoading: loadingHandleVibration} = useMutateHandleVibration({
