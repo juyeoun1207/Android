@@ -1,7 +1,3 @@
-
-- 움짤 4개 이상 혹은 20초 이상의 동영상(사진 4장 이상도 가능)
-- APK 파일(직접 업로드 혹은 구글 드라이브에 업로드한 후 링크 공유)
-
 <프로젝트 이름>
 잔소리
 
@@ -54,12 +50,23 @@ AsyncStorage – 로컬 기록 저장
 
 <팀원>
 1. 은주연
-- 
+- 고려대 독어독문학과 23학번
 
 2. 나현호
-- 
+- 카이스트 전산학부 22학번
 
 
+<실행사진>
+![Screenshot_20250709-161604_MyFirstApp](https://github.com/user-attachments/assets/268ba3f5-a02f-4bd4-9e78-c943f411e426)
+![Screenshot_20250709-161625_MyFirstApp](https://github.com/user-attachments/assets/b7bd5eb3-0b1b-454a-a780-f5fba1b2049d)
+![Screenshot_20250709-161651_MyFirstApp](https://github.com/user-attachments/assets/498bc4c1-8344-4b08-932b-33430c437b2c)
+![Screenshot_20250709-161744_MyFirstApp](https://github.com/user-attachments/assets/57c59c3d-04ec-457c-9d3c-bd88fd269af0)
+![Screenshot_20250709-161736_MyFirstApp](https://github.com/user-attachments/assets/a8b790f3-e5ed-43a9-b5bf-497fe87b1dfd)
+
+
+
+<APK>
+https://drive.google.com/file/d/1JuDiz5hhWONxCf3P3O9nT-ScKSBllgMK/view?usp=sharing
 
 
 
