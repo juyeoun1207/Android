@@ -119,10 +119,7 @@ const CameraTest = ({navigation}) => {
 		<>
 		{loading
 		?	<Container>
-				<LoadingDog/>
-				<View style={{display:'flex', width:'100%', marginTop:-15, alignItems:'center'}}>
-					<CustomText style={{fontSize:30}}>로딩중...</CustomText>
-				</View>
+				<LoadingDog isLoading={loading}/>
 			</Container>
 		:	<Container>
 				<CustomText>{name}</CustomText>

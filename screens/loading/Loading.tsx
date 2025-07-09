@@ -62,11 +62,7 @@ const Loading = ({ navigation }) => {
 		}}
 	>
 		<Container>
-			<LoadingDog/>
-			<View style={{display:'flex', width:'100%', marginTop:-15, alignItems:'center'}}>
-				<CustomText style={{fontSize:30}}>{loading ? '로딩중...' : '잔소리'}</CustomText>
-
-			</View>
+			<LoadingDog text={"잔소리"} isLoading={loading}/>
 		</Container>
 	</Pressable>
   );

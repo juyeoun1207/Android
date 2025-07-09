@@ -28,7 +28,6 @@ const AppSetting = ({ navigation }) => {
 			setWeek(data)
 		}
 	})
-
 	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading: loadingGetInfo} = useScreentime()
 	const appData = item?.appList.find(e => e.pkg == currPkg) || {}
 	const {data: timeLimit = '', isLoading} = useAppTimeLimit({
@@ -42,10 +41,7 @@ const AppSetting = ({ navigation }) => {
 		<Container>
 			{(loading || isLoading || loadingGetInfo)
 			?	<>
-					<LoadingDog/>
-					<View style={{display:'flex', width:'100%', marginTop:-15, alignItems:'center'}}>
-						<CustomText style={{fontSize:30}}>로딩중...</CustomText>
-					</View>
+					<LoadingDog isLoading={loading || isLoading || loadingGetInfo}/>
 				</>
 			:	<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
 					<Pressable onPress={() => navigation.navigate('Home')}>

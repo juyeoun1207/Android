@@ -96,10 +96,7 @@ const TimeSetting = ({ navigation }) => {
     <Container>
 		{(loading || isLoading || loadingTimeLimit || loadingGetInfo)
 		?	<>
-				<LoadingDog/>
-					<View style={{display:'flex', width:'100%', marginTop:-15, alignItems:'center'}}>
-						<CustomText style={{fontSize:30}}>{(loading || loadingTimeLimit || loadingGetInfo) ? '로딩중...' : '삭제중...'}</CustomText>
-					</View>
+				<LoadingDog isLoading={loading || isLoading || loadingTimeLimit || loadingGetInfo}/>
 			</>
 		:	<View style={{ flex:1, padding:'10%', width:'100%', backgroundColor:'#fff' }}>
 				<Pressable onPress={() => navigation.navigate('AppSetting')}>

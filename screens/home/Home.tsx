@@ -192,10 +192,7 @@ const Home = ({ navigation }) => {
 		<>
 		{(isLoading || loadingWeekRate)
 		?	<Container>
-				<LoadingDog/>
-				<View style={{display:'flex', width:'100%', marginTop:-15, alignItems:'center'}}>
-					<CustomText style={{fontSize:30}}>로딩중...</CustomText>
-				</View>
+				<LoadingDog isLoading={isLoading || loadingWeekRate}/>
 			</Container>
 		:	<View style={{minHeight: screenHeight, backgroundColor:'#fff', position:'relative'}}>
 				<View style={{paddingBottom:10, position:'absolute', zIndex:10, top:0, backgroundColor:"#fff", paddingTop:20, width:'100%', alignItems:'center', display:'flex', paddingLeft:'10%', paddingRight:'10%'}}>
