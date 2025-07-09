@@ -15,7 +15,9 @@ import currentAppZustand from '../../store/currentApp'
 import {monthObj} from '../../utils/listItem'
 import {formatSecondsToHM} from '../../utils/formatTime'
 import {getWeekDate} from '../../utils/getWeekDate'
+import { useMutation } from "@tanstack/react-query";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useScreentime from '../../hooks/query/useScreentime'
 // const appList=[
 // 	{name:'instagram', id:1},
 // 	{name:'kakaotalk', id:2},
@@ -141,82 +143,8 @@ async function scheduleAlarm() {
 }
 
 const Home = ({ navigation }) => {
-	const [appList, setAppList] = useState([])
-	const [weekList, setWeekList] = useState([])
 	const [weekSuccessRate, setWeekSuccessRate] = useState(0)
-	const [appPerWeekList, setAppPerWeekList] = useState([])
-	const [isLoading, setIsLoading] = useState(true)
 	const setCurrentApp = currentAppZustand(state => state.setCurrentApp)
-	const calcTodayInfo = (stats) => {
-		const usageMap = []
-		stats.today.forEach(item => {
-			const pkg = item.packageName;
-			const name = item.appName
-			const icon = item.iconBase64
-			const time = item.totalTimeInForeground || 0;
-			const findIndex = usageMap.findIndex(e => e.pkg == pkg)
-			if(findIndex != -1){
-				usageMap[findIndex].time += time
-			}
-			else{
-				usageMap.push({pkg: pkg, name: name,icon: icon, time: time})
-			}
-		})
-		let largeTime = 0
-		const mergedStats = usageMap.filter(e => e.pkg != "com.myfirstapp").sort((a,b) => {
-			if(a.time > largeTime) largeTime = a.time
-			if(b.time > largeTime) largeTime = b.time
-			return b.time - a.time
-		})
-		mergedStats.map(data => {
-			data.ratio = data.time * 90 / largeTime
-			return data
-		});
-		setAppList(mergedStats)
-	}
-	const calcWeekInfo = (stats) => {
-		const weekMap = []
-		const appWeekMap = []
-		const totalApp = []
-		let largeTime = 0
-		const dayTypeList = ["일","월","화","수","목","금","토"]
-		dayTypeList.forEach(dayType => {
-			let time = 0
-			if(stats.weekly[dayType]){
-				stats.weekly[dayType].map(({packageName, totalTimeInForeground}) => {
-					time += Number(totalTimeInForeground || 0)
-					if(!totalApp.some(e => e == packageName)) totalApp.push(packageName)
-				})
-			}
-			if(time > largeTime) largeTime = time
-			weekMap.push({dayType:dayType, time: time})
-		})
-		totalApp.map(pkgName => {
-			let totalTime = 0
-			let availableCnt = 0
-			const item = {}
-			dayTypeList.forEach(dayType => {
-				let time = 0
-				if(stats.weekly[dayType]){
-					time = stats.weekly[dayType].filter(e => e.packageName == pkgName).reduce((a,b) => a+= Number(b.totalTimeInForeground || 0), 0)
-					if(time > 0){
-						totalTime += time
-						availableCnt += 1
-					}
-				}
-				item[dayType] = time
-			})
-			appWeekMap.push({pkg: pkgName, available_cnt: availableCnt, total_time: totalTime, week_time: item})
-		})
-		console.log(appWeekMap)
-		setAppPerWeekList(appWeekMap)
-		if(largeTime > 0){
-			weekMap.map(data => {
-				data.ratio = data.time * 100 / largeTime
-			})
-		}
-		setWeekList(weekMap)
-	}
 	const calcWeekSuccessRate = async() => {
 		const monthPhoto = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}
 		const weekDates = getWeekDate()
@@ -224,31 +152,20 @@ const Home = ({ navigation }) => {
 		let totalSuccessRange = 0
 		weekDates.forEach((date, index) => {
 			let objectKey = 'day' + date
-			totalRange += monthPhoto[objectKey].length
-			totalSuccessRange += monthPhoto[objectKey].filter(e => e.path).length
+			totalRange += monthPhoto[objectKey].filter(e => e.pkg != 'user').length
+			totalSuccessRange += monthPhoto[objectKey].filter(e => e.path && e.pkg != 'user').length
 		})
-		if(totalRange > 0) setWeekSuccessRate(Number((totalSuccessRange * 100 / totalRange).toFixed(2)))
+		return totalRange > 0 ? Number((totalSuccessRange * 100 / totalRange).toFixed(2)) : 0
 	}
+	const {mutate: mutateGetWeekSuccessRate, isLoading: loadingWeekRate} = useMutation({
+		mutationFn: calcWeekSuccessRate,
+		onSuccess:(data) => {
+			setWeekSuccessRate(data)
+		}
+	})
+	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading} = useScreentime()
 	useEffect(() => {
-		(async () => {
-			try {
-				const stats = await UsageMonitor.getAppUsageStats();
-				if(stats?.today){
-					calcTodayInfo(stats)
-				}
-				if(stats?.weekly){
-					calcWeekInfo(stats)
-				}
-				await calcWeekSuccessRate()
-				if(isLoading){
-					setIsLoading(false)
-				}
-				return stats; // array of { packageName, totalTimeInForeground }
-			  } catch (e) {
-				console.error("Failed to get usage stats", e);
-				return [];
-			  }
-		})();
+		mutateGetWeekSuccessRate()
 	},[])
 	useEffect(() => {
 		(async () => {
@@ -273,7 +190,7 @@ const Home = ({ navigation }) => {
 	// },[]) // 알림 호출 후 카메라로 이동
 	return (
 		<>
-		{isLoading
+		{(isLoading || loadingWeekRate)
 		?	<Container>
 				<LoadingDog/>
 				<View style={{display:'flex', width:'100%', marginTop:-15, alignItems:'center'}}>
@@ -285,10 +202,10 @@ const Home = ({ navigation }) => {
 					<CustomText style={{fontSize:25, marginTop:20, marginBottom:30}}>이번주 성공률: {weekSuccessRate}%</CustomText>
 					<View style={{borderWidth:1, paddingTop:5, borderColor:'#000'}}>
 						<View style={{marginBottom:10, alignItems:'center'}}>
-							<CustomText>{`이번주 평균 사용시간 : ${weekList.filter(e => e.time > 0).length > 0 ? formatSecondsToHM(weekList.filter(e => e.time > 0).reduce((a,b) => a += Number(b.time || 0), 0) / weekList.filter(e => e.time > 0).length) : '0H'}`}</CustomText>
+							<CustomText>{`이번주 평균 사용시간 : ${item?.weekList.filter(e => e.time > 0).length > 0 ? formatSecondsToHM(item?.weekList.filter(e => e.time > 0).reduce((a,b) => a += Number(b.time || 0), 0) / item?.weekList.filter(e => e.time > 0).length) : '0H'}`}</CustomText>
 						</View>
 						<View style={{width:'100%', flexDirection:'row', height:100, paddingLeft:5, paddingRight: 5, alignItems:'flex-end'}}>
-							{weekList.map((data, index) => {
+							{item?.weekList.map((data, index) => {
 								return(
 									<View key={index} style={{width:35, marginLeft: index == 0 ? 0 : 9, height:data.ratio, backgroundColor:'#F6C671'}}/>
 								)
@@ -329,14 +246,14 @@ const Home = ({ navigation }) => {
 				<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 1, paddingTop:270, paddingBottom:70}}>
 					<View style={{display:'flex',width:'100%'}}>
 						<View style={{gap:15}}>
-							{appList.map((data, index) => {
+							{item?.appList.map((data, index) => {
 								
 								return (
 									<Pressable 
 										key={index} 
 										onPress={() => {
 											navigation.navigate('AppSetting');
-											setCurrentApp({...data, week_info: appPerWeekList.find(e => e.pkg == data.pkg)})
+											setCurrentApp(data.pkg)
 										}} 
 										style={{...styles.appListBox, marginLeft:20, paddingRight:10, flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', position:'relative'}}
 									>

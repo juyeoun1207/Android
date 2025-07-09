@@ -7,8 +7,7 @@ import SoundPlayer from 'react-native-sound-player';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import useQuoteZustand from '../../../store/useQuote';
-
-
+import useMutateHandleQuote from '../../../hooks/mutation/useMutateHandleQuote'
 const playQuoteAudio = (fileName) => {
   try {
     const nameWithoutExt = fileName.replace('.mp3', '');
@@ -20,22 +19,33 @@ const playQuoteAudio = (fileName) => {
 
 const Quote = ({ navigation }) => {
    const quoteList = useQuoteZustand((state) => state.quoteList);
-   const defaultQuotes = quoteList.filter((item) => item.type === '기본');
-   const currentQuote = useQuoteZustand((state) => state.selectedQuote);
-   const setSelectedQuote = useQuoteZustand((state) => state.setSelectedQuote);
+	const defaultQuotes = quoteList.filter((item) => item.type === '기본');
+	const currentQuote = useQuoteZustand((state) => state.selectedQuote);
+	const setSelectedQuote = useQuoteZustand((state) => state.setSelectedQuote);
 
-   const btsQuotes = quoteList.filter(item => item.type === 'BTS');
-   const isBtsSelected = btsQuotes.some(item => item.text === currentQuote);
-   const selectedBts = btsQuotes.find(item => item.text === currentQuote);
+	const btsQuotes = quoteList.filter(item => item.type === 'BTS');
+	const isBtsSelected = btsQuotes.some(item => item.text === currentQuote);
+	const selectedBts = btsQuotes.find(item => item.text === currentQuote);
 
-   const illitQuotes = quoteList.filter(item => item.type === 'ILLIT');
-   const isIllitSelected = illitQuotes.some(item => item.text === currentQuote);
-   const selectedIllit = illitQuotes.find(item => item.text === currentQuote);
+	const illitQuotes = quoteList.filter(item => item.type === 'ILLIT');
+	const isIllitSelected = illitQuotes.some(item => item.text === currentQuote);
+	const selectedIllit = illitQuotes.find(item => item.text === currentQuote);
 
 
-   const [text, setText] = useState('')
-
-   return (
+	const [text, setText] = useState('')
+	const {mutate: mutateHandleQuote, isLoading} = useMutateHandleQuote({
+		onSuccess:(data) => {
+			playQuoteAudio(data.audio);
+			setSelectedQuote(data.text);
+		}
+	})
+	const {mutate: mutateHandleQuoteDirect, isLoading: loadingDirect} = useMutateHandleQuote({
+		onSuccess:(data) => {
+			setSelectedQuote(data.text);
+			Tts.speak(data.text);
+		}
+	})
+	return (
 		<KeyboardAvoidingView 
 			style={{flex:1}}
 			behavior={'height'}
@@ -54,72 +64,71 @@ const Quote = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow:1, paddingBottom:20}}>
 					<View>
 						<CustomText style={{fontSize:20, marginBottom:15}}>기본 글귀</CustomText>
-            {defaultQuotes.map((item, index) => (
-            <Pressable
-               key={index}
-               onPress={() => {
-                  playQuoteAudio(item.audio);
-                  setSelectedQuote(item.text);
-               }}
-               style={{...styles.quoteBox, flexDirection: 'row', alignItems: 'center', marginBottom: 8,}}>
-                  <View style={{width:32}}>
-                  {currentQuote === item.text && (<Icon name="check" size={20} color="#333" />
-                  )}
-                  </View>
-                  <CustomText style={{fontSize: 14}}>
-                  {item.text}
-                  </CustomText>
-            </Pressable>
-            ))}
-            
-            <View style={{ marginTop: 30 }}>
-            <Pressable
-               onPress={() => {navigation.navigate('BTS')}}
-               style={styles.quoteBox}
-            >
-               <View style={{ flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', height:'100%' }}>
-                  <View style={{flexDirection: 'row', height:'100%', alignItems: 'center'}}>
-                     <View style={{width:32}}>
-                        {isBtsSelected && (<Icon name="check" size={20} color="#333" />)}
-                     </View>
-                     <CustomText style={{fontSize:15}}>방탄소년단 에디션</CustomText>
-                  </View>
-                  <View style={{flexDirection: 'row', alignItems:'center'}}>
-                     {selectedBts && (
-                     <CustomText style={{marginRight:10, fontSize:13, color:'#333'}}>
-                        {selectedBts.name}
-                     </CustomText>
-                     )}
-                     <SimpleIcon name="arrow-right" size={10} color="#333"/>
-                  </View>
-               </View>
-            </Pressable>
-            <View style={{marginBottom: 5}}></View>
-            <Pressable
-               onPress={() => {navigation.navigate('ILLIT')}}
-               style={styles.quoteBox}
-            >
-               <View style={{ flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', height:'100%' }}>
-                  <View style={{flexDirection: 'row', height:'100%', alignItems: 'center'}}>
-                     <View style={{width:32}}>
-                        {isIllitSelected && (<Icon name="check" size={20} color="#333" />)}
-                     </View>
-                     <CustomText style={{fontSize:15}}>아일릿 에디션</CustomText>
-                  </View>
-                  <View style={{flexDirection: 'row', alignItems:'center'}}>
-                     {selectedIllit && (
-                     <CustomText style={{marginRight:10, fontSize:13, color:'#333'}}>
-                        {selectedIllit.name}
-                     </CustomText>
-                     )}
-                     <SimpleIcon name="arrow-right" size={10} color="#333"/>
-                  </View>
-               </View>
-            </Pressable>
-            </View>
+			{defaultQuotes.map((item, index) => (
+			<Pressable
+				key={index}
+				onPress={() => {
+					if(!isLoading) mutateHandleQuote(item)
+				}}
+				style={{...styles.quoteBox, flexDirection: 'row', alignItems: 'center', marginBottom: 8,}}>
+					<View style={{width:32}}>
+					{currentQuote === item.text && (<Icon name="check" size={20} color="#333" />
+					)}
+					</View>
+					<CustomText style={{fontSize: 14}}>
+					{item.text}
+					</CustomText>
+			</Pressable>
+			))}
+			
+			<View style={{ marginTop: 30 }}>
+			<Pressable
+				onPress={() => {navigation.navigate('BTS')}}
+				style={styles.quoteBox}
+			>
+				<View style={{ flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', height:'100%' }}>
+					<View style={{flexDirection: 'row', height:'100%', alignItems: 'center'}}>
+						<View style={{width:32}}>
+						{isBtsSelected && (<Icon name="check" size={20} color="#333" />)}
+						</View>
+						<CustomText style={{fontSize:15}}>방탄소년단 에디션</CustomText>
+					</View>
+					<View style={{flexDirection: 'row', alignItems:'center'}}>
+						{selectedBts && (
+						<CustomText style={{marginRight:10, fontSize:13, color:'#333'}}>
+						{selectedBts.name}
+						</CustomText>
+						)}
+						<SimpleIcon name="arrow-right" size={10} color="#333"/>
+					</View>
+				</View>
+			</Pressable>
+			<View style={{marginBottom: 5}}></View>
+			<Pressable
+				onPress={() => {navigation.navigate('ILLIT')}}
+				style={styles.quoteBox}
+			>
+				<View style={{ flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', height:'100%' }}>
+					<View style={{flexDirection: 'row', height:'100%', alignItems: 'center'}}>
+						<View style={{width:32}}>
+						{isIllitSelected && (<Icon name="check" size={20} color="#333" />)}
+						</View>
+						<CustomText style={{fontSize:15}}>아일릿 에디션</CustomText>
+					</View>
+					<View style={{flexDirection: 'row', alignItems:'center'}}>
+						{selectedIllit && (
+						<CustomText style={{marginRight:10, fontSize:13, color:'#333'}}>
+						{selectedIllit.name}
+						</CustomText>
+						)}
+						<SimpleIcon name="arrow-right" size={10} color="#333"/>
+					</View>
+				</View>
+			</Pressable>
+			</View>
 
-            <CustomText style={{fontSize:20, marginTop:50, marginBottom:15}}>직접 설정</CustomText>
-               {/* 입력 박스 */}
+			<CustomText style={{fontSize:20, marginTop:50, marginBottom:15}}>직접 설정</CustomText>
+				{/* 입력 박스 */}
 			<View
 				style={{
 					flexDirection: 'row',
@@ -143,9 +152,8 @@ const Quote = ({ navigation }) => {
 					value={text}
 					onChangeText={setText}
 					onSubmitEditing={() => {
-						if (text.trim()) {
-							setSelectedQuote(text.trim());
-							Tts.speak(text.trim());
+						if (text.trim() && !loadingDirect) {
+							mutateHandleQuoteDirect({text: text.trim()})
 						}
 					}}
 				/>
@@ -157,13 +165,13 @@ const Quote = ({ navigation }) => {
 				</CustomText>
 			</View>
 
-            </View>
-            </ScrollView>
-         </View>
+			</View>
+			</ScrollView>
+			</View>
 
 			</Container>
 	</KeyboardAvoidingView>
-  )
+	)
 };
 
 

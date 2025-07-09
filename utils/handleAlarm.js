@@ -16,10 +16,10 @@ export async function showOveruseAlarm(appName) {
 export async function deleteAlarm(){
 	await notifee.deleteChannel('alarm');
 }
-export async function createAlarm(channel_id, name, sound, vibration){
+export async function createAlarm(channel_id, sound, vibration){
 	await notifee.createChannel({
 		id: channel_id,
-		name: name,
+		name: '잔소리 알람',
 		importance: AndroidImportance.HIGH,
 		sound: sound,
 		vibration: vibration
@@ -33,7 +33,6 @@ export async function executeAlarm(id, appName, pkgName){
 		body: `${appName} 앱을 너무 오래 사용하고 있어요.`,
 		android: {
 			channelId: 'alarm',
-			vibrationPattern: [0, 500, 200, 500],
 			pressAction: {
 				id: 'camera',
 				launchActivity: 'default',

@@ -8,32 +8,39 @@ import currentAppZustand from '../../../store/currentApp'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {monthObj, weekList} from '../../../utils/listItem'
 import {getWeekDate} from '../../../utils/getWeekDate'
+import { useMutation } from "@tanstack/react-query";
 import UsageMonitor from '../../../utils/UsageMonitorModule'
 import LoadingDog from '../../../components/LoadingDog';
 import {formatSecondsToHM} from '../../../utils/formatTime'
 import {getWeekSuccessRate, getWeekAvgTime, getWeekSuccessList} from '../../../utils/getWeekViewInfo'
-const defaultQuotes = []
-
-
+import useAppTimeLimit from '../../../hooks/query/useAppTimeLimit'
+import useScreentime from '../../../hooks/query/useScreentime'
 const AppSetting = ({ navigation }) => {
 	const [week, setWeek] = useState([])
-	const [loading, setLoading] = useState(true)
-	const [timeLimit, setTimeLimit] = useState('')
-	const appData = currentAppZustand(state => state.currentApp)
-	const getTimeLimit = async() => {
-		const seconds = await UsageMonitor.getUsageThreshold(appData.pkg);
-		setTimeLimit(formatSecondsToHM(seconds))
-	}
+	const currPkg = currentAppZustand(state => state.currentApp)
 	const getInfo = async() => {
-		await getTimeLimit()
-		await getWeekSuccessList(setWeek, setLoading, appData)
+		const result = await getWeekSuccessList(appData)
+		return result
 	}
+	const {mutate: mutateGetInfo, isLoading: loading} = useMutation({
+		mutationFn: getInfo,
+		onSuccess:(data) => {
+			setWeek(data)
+		}
+	})
+
+	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading: loadingGetInfo} = useScreentime()
+	const appData = item?.appList.find(e => e.pkg == currPkg) || {}
+	const {data: timeLimit = '', isLoading} = useAppTimeLimit({
+		pkg: appData?.pkg,
+		enabled: !!appData?.pkg
+	})
 	useEffect(() => {
-		getInfo()
+		mutateGetInfo()
 	},[appData])
 	return (
 		<Container>
-			{loading
+			{(loading || isLoading || loadingGetInfo)
 			?	<>
 					<LoadingDog/>
 					<View style={{display:'flex', width:'100%', marginTop:-15, alignItems:'center'}}>
@@ -52,7 +59,7 @@ const AppSetting = ({ navigation }) => {
 					</View>
 					<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 1, paddingTop:0, paddingTop:30, paddingBottom:20}}>
 					<View>
-						<CustomText style={{fontSize:20, marginBottom:15}}>{`시간 제한 : ${timeLimit ? timeLimit : '없음'}`}</CustomText>
+						<CustomText style={{fontSize:20, marginBottom:15}}>{`시간 제한 : ${timeLimit ? formatSecondsToHM(timeLimit) : '없음'}`}</CustomText>
 						<View>
 							<Pressable
 								onPress={() => {navigation.navigate('TimeSetting')}}

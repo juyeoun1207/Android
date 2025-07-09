@@ -10,13 +10,12 @@ export const getWeekSuccessRate = (week) => {
 export const getWeekAvgTime = (appData) => {
 	return `이번 주 평균 이용 시간 : ${appData?.week_info?.available_cnt > 0 ? formatSecondsToHM(appData.week_info.total_time / appData.week_info.available_cnt) : '0H'}`
 }
-export const getWeekSuccessList = async(setWeek, setLoading, appData) => {
+export const getWeekSuccessList = async(appData) => {
 	const monthPhoto = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}
 	const weekDates = getWeekDate()
 	const item = []
 	weekDates.forEach((date, index) => {
 		let objectKey = 'day' + date
-		console.log(monthPhoto, objectKey)
 		if(date > new Date().getDate()){
 			item.push({name:weekList[index],state:'not_yet'})
 		}
@@ -29,6 +28,5 @@ export const getWeekSuccessList = async(setWeek, setLoading, appData) => {
 			else item.push({name:weekList[index],state:'not_alarmed'})
 		}
 	})
-	setWeek(item)
-	setLoading(false)
+	return item
 }

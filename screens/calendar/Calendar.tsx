@@ -8,6 +8,7 @@ import CustomText from '../../components/CustomText';
 import Icon from 'react-native-vector-icons/Feather'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal'
+import useMutateHandleStar from '../../hooks/mutation/useMutateHandleStar'
 import RNFS from 'react-native-fs'
 import {monthObj} from '../../utils/listItem'
 import {Camera, useCameraDevices} from 'react-native-vision-camera'
@@ -36,35 +37,46 @@ const Calendar = ({ navigation }) => {
 	const device = devices?.find(e => e.position == 'back');
 	const cameraRef = useRef<Camera>(null);
 
-	const takePhoto = async() => {
+	const handlePhoto = async() => {
 		let photoArr = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}
-		let objectKey = 'day' + new Date().getDate()
+		let objectKey = 'day' + selectedDate.day
 		if(cameraRef.current == null) return;
 		const photo = await cameraRef.current.takePhoto({});
 		const dateKey = new Date().toISOString().split('T')[0];
 		const destPath = `${RNFS.DocumentDirectoryPath}/user-${dateKey}.jpg`;
 		await RNFS.copyFile(photo.path, destPath);
 		photoArr[objectKey].push({pkg:'user', date: dateKey, path: destPath})
-		setSelectedImages(photoArr[objectKey])
+		setSelectedImages(photoArr[objectKey].filter(e => e.path))
 		setPhotoMap(photoArr)
 		await AsyncStorage.setItem(`month-photo`, JSON.stringify(photoArr));
 
 		Alert.alert('사진이 저장되었습니다!');
 		setIsCamera(false)
 	}
+	// const mutateHandler = () => {
+	// 	return ''
+	// }
+	// const isLoading = false
+
+	const {mutate: mutateHandleStar, isLoading} = useMutateHandleStar({
+		onSuccess:(data) => {
+			setSelectedImages(data.images.filter(e => e.path))
+			setPhotoMap(data.map)
+			setCurrentImageIndex(0)
+
+		}
+	})
 	const failedDates = {
     	'2025-07-08': true,
     	'2025-07-09': true,
   	};
 
-	const [selectedImages, setSelectedImages] = useState([
-    	require('../../assets/images/calendar-example.png'),
-    	require('../../assets/images/calendar-example2.jpg'),
-    	require('../../assets/images/calendar-example3.jpg'),
-  	]);
+	const [selectedImages, setSelectedImages] = useState([]);
+	// require('../../assets/images/calendar-example.png'),
+	// require('../../assets/images/calendar-example2.jpg'),
+	// require('../../assets/images/calendar-example3.jpg'),
 
   	const [currentImageIndex, setCurrentImageIndex] = useState(0);
- 	const [representativeImages, setRepresentativeImages] = useState({});
 	const saveToGallery = async () => {
 		try {
 		  // 캡처
@@ -121,20 +133,20 @@ const Calendar = ({ navigation }) => {
 		<Container>
 			{isCamera ? (
 			<>
-			<View style={{display:'flex',width:'100%', flex:1, justifyContent:'center', alignItems:'center'}}>
-				{device &&
-					<Camera
-						ref={cameraRef}
-						style={{flex:1, width:'100%'}}
-						device={device}
-						isActive={true}
-						photo={true}
-						video={false}
-						audio={false}
-					/>
-				}
-				<Button title="📸 촬영" onPress={() => takephoto()} />
-			</View>
+				<View style={{display:'flex',width:'100%', flex:1, justifyContent:'center', alignItems:'center'}}>
+					{device &&
+						<Camera
+							ref={cameraRef}
+							style={{flex:1, width:'100%'}}
+							device={device}
+							isActive={true}
+							photo={true}
+							video={false}
+							audio={false}
+						/>
+					}
+					<Button title="📸 촬영" onPress={() => handlePhoto()} />
+				</View>
 			</> )
 			:
 			(
@@ -152,9 +164,8 @@ const Calendar = ({ navigation }) => {
 						const items = photoMap?.[key]?.filter(e => e.path) 
 						const path = items?.[0]?.path || '';
 						const isFailed = !!!path && ((new Date(date.dateString).getMonth() == new Date().getMonth()) && (Number(date.day) < Number(new Date().getDate())));
-
 						return (
-							<View
+							<TouchableOpacity
 								key={key}
 								style={{
 									backgroundColor: 'white',
@@ -162,10 +173,9 @@ const Calendar = ({ navigation }) => {
 									height: 45,
 									alignItems: 'center',
 								}}
-							>
-							<TouchableOpacity
 								disabled={state === 'disabled' || isFailed} // 실패 날짜는 비활성화
 								onPress={() => {
+									// reset()
 									if (!isFailed) {
 										setSelectedDate(date);
 										setModalVisible(true);
@@ -197,7 +207,6 @@ const Calendar = ({ navigation }) => {
 									: null
 								}
 							</TouchableOpacity>
-							</View>
 						);
 						}}
 					/>
@@ -233,7 +242,7 @@ const Calendar = ({ navigation }) => {
 						{selectedImages.length > 0
 						?	<Image
 								source={{ uri: 'file://' + selectedImages[currentImageIndex].path}}
-								style={{ width: 100, height: 100, marginHorizontal: 0 }}
+								style={{ width: 250, height: 250, marginHorizontal: 0 }}
 								resizeMode="contain"
 							/>
 						:	<TouchableOpacity onPress={() => setIsCamera(true)}>
@@ -259,41 +268,38 @@ const Calendar = ({ navigation }) => {
 							</TouchableOpacity>
 						}
 						<TouchableOpacity
-							disabled={currentImageIndex === selectedImages.length - 1}
+							disabled={(currentImageIndex === (selectedImages.length - 1)) || selectedImages.length == 0}
 							onPress={() => setCurrentImageIndex(currentImageIndex + 1)}
 							style={{ padding: 10 }}
 						>
-						<Icon
-							name="arrow-right"
-							size={24}
-							color={currentImageIndex === selectedImages.length - 1 ? '#ccc' : '#000'}
-						/>
+							<Icon
+								name="arrow-right"
+								size={24}
+								color={((currentImageIndex === (selectedImages.length - 1)) || selectedImages.length == 0) ? '#ccc' : '#000'}
+							/>
 						</TouchableOpacity>
 					</View>
-
+					{selectedImages.length > 0 && 
 					<TouchableOpacity
 						onPress={() => {
-						setRepresentativeImages({
-							...representativeImages,
-							[selectedDate]: selectedImages[currentImageIndex]
-						});
+							if(!isLoading) mutateHandleStar({selectedDate, pkg: selectedImages[currentImageIndex].pkg})
 						}}
 						style={{ position: 'absolute', top: 40, right: 40 }}
 					>
 						<MaterialIcon
-						name={
-							representativeImages[selectedDate] === selectedImages[currentImageIndex]
-							? 'star'
-							: 'star-border'
-						}
-						size={30}
-						color={
-							representativeImages[selectedDate] === selectedImages[currentImageIndex]
-							? '#FFD700'
-							: '#ccc'
-						}
+							name={
+								selectedImages[currentImageIndex].star
+								? 'star'
+								: 'star-border'
+							}
+							size={30}
+							color={
+								selectedImages[currentImageIndex].star
+								? '#FFD700'
+								: '#ccc'
+							}
 						/>
-					</TouchableOpacity>
+					</TouchableOpacity>}
 
 					<TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 5 }}>
 						<CustomText style={{ fontSize: 20, marginTop:0 }}>닫기</CustomText>

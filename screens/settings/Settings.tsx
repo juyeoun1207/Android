@@ -5,7 +5,8 @@ import Container from '../../components/Container'
 import CustomText from '../../components/CustomText';
 import Footer from '../../components/Footer'
 import useQuoteZustand from '../../store/useQuote';
-import {deleteAlarm, createAlarm} from '../../utils/handleAlarm'
+import useMutateHandleVibration from '../../hooks/mutation/useMutateHandleVibration'
+import useMutateHandleSound from '../../hooks/mutation/useMutateHandleSound'
 const Settings = ({ navigation }) => {
 	const soundType = soundTypeZustand((state) => state.soundType);
 	const setSoundType = soundTypeZustand((state) => state.setSoundType);
@@ -14,16 +15,16 @@ const Settings = ({ navigation }) => {
 	const currentQuote = useQuoteZustand((state) => state.selectedQuote);
 	const quoteList = useQuoteZustand((state) => state.quoteList);
 	const selectedQuoteObj = quoteList.find((q) => q.text === currentQuote);
-	const regenerateAlarmBySound = async(value) => {
-		await deleteAlarm()
-		await createAlarm('alarm', 'alarm_name', value === 'on' ? 'alarmexample1' : null, vibrationType === 'on')
-		setSoundType(value ? 'on' : 'off')
-	}
-	const regenerateAlarmByVibration = async(value) => {
-		await deleteAlarm()
-		await createAlarm('alarm', 'alarm_name', soundType === 'on' ? 'alarmexample1' : null, value === 'on')
-		setVibrationType(value ? 'on' : 'off')
-	}
+	const {mutate: mutateHandleSoundType, isLoading: loadingHandleSound} = useMutateHandleSound({
+		onSuccess:(data) => {
+			setSoundType(data.value ? 'on' : 'off')
+		}
+	})
+	const {mutate: mutateHandleVibrationType, isLoading: loadingHandleVibration} = useMutateHandleVibration({
+		onSuccess:(data) => {
+			setVibrationType(data.value ? 'on' : 'off')
+		}
+	})
 	return (
 		<Container>
 			<View style={{ flex:1, padding: '10%', width: '100%' , backgroundColor:'#fff'}}>
@@ -36,7 +37,7 @@ const Settings = ({ navigation }) => {
 						<Switch
 							value={soundType === 'on'}
 							onValueChange={(value) => {
-								regenerateAlarmBySound(value)
+								if(!loadingHandleSound) mutateHandleSoundType({value, vibrationType, audio: selectedQuoteObj.audio?.replace('.mp3', '') || 'default'})
 							}}
 							trackColor={{ false: '#ccc', true: '#65C466'}}
 							thumbColor={soundType === 'on' ? "#fff" : "#f4f3f4"}
@@ -46,7 +47,9 @@ const Settings = ({ navigation }) => {
 						<CustomText style={styles.settingText}>진동 설정</CustomText>
 						<Switch
 							value={vibrationType === 'on'}
-							onValueChange={(value) => regenerateAlarmByVibration(value)}
+							onValueChange={(value) => {
+								if(!loadingHandleVibration) mutateHandleVibrationType({value, soundType, audio: selectedQuoteObj.audio?.replace('.mp3', '') || 'default'})
+							}}
 							trackColor={{false:"#ccc", true:"#65C466"}}
 							thumbColor={vibrationType === 'on' ? "#fff" : "#f4f3f4"}
 						/>

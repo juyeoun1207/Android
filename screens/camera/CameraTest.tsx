@@ -95,7 +95,9 @@ const CameraTest = ({navigation}) => {
 							audio={false}
 						/>
 					}
-					<Button title="📸 촬영" onPress={takePhoto} />
+					<View style={{height:50, justifyContent:'center'}}>
+						<Button title="📸 촬영" onPress={takePhoto} />
+					</View>
 				</View>
 				<Footer navigation={navigation}/>
 			</Container>

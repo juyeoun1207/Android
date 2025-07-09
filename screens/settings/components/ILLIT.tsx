@@ -7,6 +7,7 @@ import SoundPlayer from 'react-native-sound-player';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import useQuoteZustand from '../../../store/useQuote';
 
+import useMutateHandleQuote from '../../../hooks/mutation/useMutateHandleQuote'
 const playQuoteAudio = (fileName) => {
   try {
     const nameWithoutExt = fileName.replace('.mp3', '');
@@ -23,42 +24,47 @@ const ILLIT = ({ navigation }) => {
   const currentQuote = useQuoteZustand((state) => state.selectedQuote);
   const setSelectedQuote = useQuoteZustand((state) => state.setSelectedQuote);
 
-  return (
-    <Container>
-      <View style={{ flex:1, padding: '10%', width:'100%', backgroundColor:'#fff' }}>
-        <Pressable onPress={() => navigation.navigate('Quote')}>
-          <Icon name="arrow-back" size={30} color="#000" />
-        </Pressable>
+  const {mutate: mutateHandleQuote, isLoading} = useMutateHandleQuote({
+		onSuccess:(data) => {
+			playQuoteAudio(data.audio);
+			setSelectedQuote(data.text);
+		}
+	})
+	return (
+		<Container>
+		<View style={{ flex:1, padding: '10%', width:'100%', backgroundColor:'#fff' }}>
+			<Pressable onPress={() => navigation.navigate('Quote')}>
+			<Icon name="arrow-back" size={30} color="#000" />
+			</Pressable>
 
-        <View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
-          <CustomText style={{ fontSize: 30 }}>아일릿 에디션</CustomText>
-        </View>
+			<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
+			<CustomText style={{ fontSize: 30 }}>아일릿 에디션</CustomText>
+			</View>
 
-        <View style={{ gap: 10 }}>
-          {illitQuotes.map((item, index) => (
-            <View key={index}>
-              <CustomText style={{fontSize:20}}>{item.name}</CustomText>
-              <Pressable
-                onPress={() => {
-                  playQuoteAudio(item.audio);
-                  setSelectedQuote(item.text);
-                }}
-              >
-                <View style={{...styles.textBox, flexDirection: 'row', alignItems: 'center'}}>
-                  <View style={{width:32}}>
-                    {currentQuote === item.text && (
-                      <Icon name='check' size={24} color="#333"/>
-                    )}
-                  </View>
-                  <CustomText style={{fontSize: 14}}>{item.text}</CustomText>
-                </View>
-              </Pressable>
-            </View>
-          ))}
-        </View>
-      </View>
-    </Container>
-  )
+			<View style={{ gap: 10 }}>
+			{illitQuotes.map((item, index) => (
+				<View key={index}>
+				<CustomText style={{fontSize:20}}>{item.name}</CustomText>
+				<Pressable
+					onPress={() => {
+						if(!isLoading) mutateHandleQuote(item)
+					}}
+				>
+					<View style={{...styles.textBox, flexDirection: 'row', alignItems: 'center'}}>
+					<View style={{width:32}}>
+						{currentQuote === item.text && (
+						<Icon name='check' size={24} color="#333"/>
+						)}
+					</View>
+					<CustomText style={{fontSize: 14}}>{item.text}</CustomText>
+					</View>
+				</Pressable>
+				</View>
+			))}
+			</View>
+		</View>
+		</Container>
+	)
 };
 
 

@@ -6,6 +6,7 @@ import Tts from 'react-native-tts';
 import SoundPlayer from 'react-native-sound-player';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import useQuoteZustand from '../../../store/useQuote';
+import useMutateHandleQuote from '../../../hooks/mutation/useMutateHandleQuote'
 
 const playQuoteAudio = (fileName) => {
   try {
@@ -23,6 +24,12 @@ const BTS = ({ navigation }) => {
   const currentQuote = useQuoteZustand((state) => state.selectedQuote);
   const setSelectedQuote = useQuoteZustand((state) => state.setSelectedQuote);
 
+  const {mutate: mutateHandleQuote, isLoading} = useMutateHandleQuote({
+		onSuccess:(data) => {
+			playQuoteAudio(data.audio);
+			setSelectedQuote(data.text);
+		}
+	})
   return (
     <Container>
       <View style={{ flex:1, padding: '10%', width:'100%', backgroundColor:'#fff' }}>
@@ -40,8 +47,7 @@ const BTS = ({ navigation }) => {
               <CustomText style={{fontSize:20}}>{item.name}</CustomText>
               <Pressable
                 onPress={() => {
-                  playQuoteAudio(item.audio);
-                  setSelectedQuote(item.text);
+					if(!isLoading) mutateHandleQuote(item)
                 }}
               >
                 <View style={{...styles.textBox, flexDirection: 'row', alignItems: 'center'}}>
