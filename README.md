@@ -103,7 +103,6 @@ https://drive.google.com/file/d/1JuDiz5hhWONxCf3P3O9nT-ScKSBllgMK/view?usp=shari
 
 
 
-
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
