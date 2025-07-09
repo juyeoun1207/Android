@@ -30,10 +30,10 @@ const BTS = ({ navigation }) => {
           <Icon name="arrow-back" size={30} color="#000" />
         </Pressable>
 
-        <View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
+        <View style={{ alignItems: 'center', marginTop: 20, marginBottom: 30 }}>
           <CustomText style={{ fontSize: 30 }}>방탄소년단 에디션</CustomText>
         </View>
-      <ScrollView contentContainerStyle={{flexGrow: 1, paddingTop:0, paddingBottom:50}}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 1, paddingTop:0, paddingBottom:30}}>
         <View style={{ gap: 10 }}>
           {btsQuotes.map((item, index) => (
             <View key={index}>

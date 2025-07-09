@@ -48,10 +48,10 @@ const Quote = ({ navigation }) => {
 						<Icon name="arrow-back" size={30} color="#000" />
 					</Pressable>
 
-					<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
+					<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 30 }}>
 						<CustomText style={{ fontSize: 30 }}>글귀 설정</CustomText>
 					</View>
-            <ScrollView contentContainerStyle={{flexGrow:1, paddingBottom:20}}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow:1, paddingBottom:20}}>
 					<View>
 						<CustomText style={{fontSize:20, marginBottom:15}}>기본 글귀</CustomText>
             {defaultQuotes.map((item, index) => (

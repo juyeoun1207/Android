@@ -282,7 +282,7 @@ const Home = ({ navigation }) => {
 			</Container>
 		:	<View style={{minHeight: screenHeight, backgroundColor:'#fff', position:'relative'}}>
 				<View style={{paddingBottom:10, position:'absolute', zIndex:10, top:0, backgroundColor:"#fff", paddingTop:20, width:'100%', alignItems:'center', display:'flex', paddingLeft:'10%', paddingRight:'10%'}}>
-					<CustomText style={{fontSize:25, marginTop:10, marginBottom:20}}>{`${new Date().getMonth() + 1}월 2주차 성공률 : ${weekSuccessRate}%`}</CustomText>
+					<CustomText style={{fontSize:25, marginTop:20, marginBottom:30}}>이번주 성공률: {weekSuccessRate}%</CustomText>
 					<View style={{borderWidth:1, paddingTop:5, borderColor:'#000'}}>
 						<View style={{marginBottom:10, alignItems:'center'}}>
 							<CustomText>{`이번주 평균 사용시간 : ${weekList.filter(e => e.time > 0).length > 0 ? formatSecondsToHM(weekList.filter(e => e.time > 0).reduce((a,b) => a += Number(b.time || 0), 0) / weekList.filter(e => e.time > 0).length) : '0H'}`}</CustomText>
@@ -290,7 +290,7 @@ const Home = ({ navigation }) => {
 						<View style={{width:'100%', flexDirection:'row', height:100, paddingLeft:5, paddingRight: 5, alignItems:'flex-end'}}>
 							{weekList.map((data, index) => {
 								return(
-									<View key={index} style={{width:35, marginLeft: index == 0 ? 0 : 9, height:data.ratio, backgroundColor:'#E7DCA4'}}/>
+									<View key={index} style={{width:35, marginLeft: index == 0 ? 0 : 9, height:data.ratio, backgroundColor:'#F6C671'}}/>
 								)
 							})}
 						</View>
@@ -326,7 +326,7 @@ const Home = ({ navigation }) => {
 						/>
 					</View> */}
 				</View>
-				<ScrollView contentContainerStyle={{flexGrow: 1, paddingTop:250, paddingBottom:50}}>
+				<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 1, paddingTop:270, paddingBottom:70}}>
 					<View style={{display:'flex',width:'100%'}}>
 						<View style={{gap:15}}>
 							{appList.map((data, index) => {
@@ -340,7 +340,7 @@ const Home = ({ navigation }) => {
 										}} 
 										style={{...styles.appListBox, marginLeft:20, paddingRight:10, flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', position:'relative'}}
 									>
-										<View style={{height:'100%', position:'absolute', left:0, width:data.ratio + '%', backgroundColor:'#FFE7F0'}}></View>
+										<View style={{height:'100%', position:'absolute', left:0, width:data.ratio + '%', backgroundColor:'#F5E2B8'}}></View>
 										<View style={{flexDirection:'row', alignItems:'center'}}>
 											<Image
 												source={{ uri: `data:image/png;base64,${data.icon}` }}

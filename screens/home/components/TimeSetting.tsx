@@ -96,15 +96,17 @@ const TimeSetting = ({ navigation }) => {
 					<CustomText style={{fontSize:15}}>확인</CustomText>
 				</Pressable>
 				{isSet && 
-				<Pressable 
-					style={{width:100, marginTop: 20, alignItems: 'center', backgroundColor: '#fff', borderColor: '#cccccc', borderWidth: 1, padding: 12, borderRadius: 10, alignSelf: 'flex-end'}}
-					onPress={async() => {
-						await UsageMonitor.removeUsageThreshold(appData.pkg);
-						await checkIsSet()
-					}}
-				>
-					<CustomText style={{fontSize:15}}>시간 제한 삭제</CustomText>
-				</Pressable>}
+				<View style={{ flex: 1, justifyContent: 'flex-end', paddingBottom: 30 }}>
+					<Pressable 
+						style={{width:150, marginTop: 20, alignItems: 'center', backgroundColor: '#fff', borderColor: '#c51212', borderWidth: 1, padding: 12, borderRadius: 10, alignSelf: 'center'}}
+						onPress={async() => {
+							await UsageMonitor.removeUsageThreshold(appData.pkg);
+							await checkIsSet()
+						}}
+					>
+						<CustomText style={{fontSize:15, color:'#C51212'}}>시간 제한 삭제</CustomText>
+					</Pressable>
+				</View>}
 			</View>
 		}
     </Container>

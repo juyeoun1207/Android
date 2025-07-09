@@ -45,12 +45,12 @@ const AppSetting = ({ navigation }) => {
 						<Icon name="arrow-back" size={30} color="#000" />
 					</Pressable>
 
-					<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 50 }}>
+					<View style={{ alignItems: 'center', marginTop: 20, marginBottom: 10 }}>
 						<CustomText style={{ fontSize: 30 }}>{appData.name}</CustomText>
 						<CustomText style={{ fontSize : 15, color: 'gray', marginTop:20}}>{getWeekSuccessRate(week)}</CustomText>
 						<CustomText style={{ fontSize : 15, color: 'gray', marginTop:5}}>{getWeekAvgTime(appData)}</CustomText>
 					</View>
-					<ScrollView contentContainerStyle={{flexGrow: 1, paddingTop:50, paddingBottom:50}}>
+					<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 1, paddingTop:0, paddingTop:30, paddingBottom:20}}>
 					<View>
 						<CustomText style={{fontSize:20, marginBottom:15}}>{`시간 제한 : ${timeLimit ? timeLimit : '없음'}`}</CustomText>
 						<View>
