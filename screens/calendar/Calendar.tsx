@@ -13,6 +13,7 @@ import RNFS from 'react-native-fs'
 import {monthObj} from '../../utils/listItem'
 import {Camera, useCameraDevices} from 'react-native-vision-camera'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import IconAwesome from 'react-native-vector-icons/MaterialIcons'
 const styles = StyleSheet.create({
 	markingDate: {
 		color:'blue'
@@ -22,7 +23,34 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontFamily:'DungGeunMo'
-	}
+	},
+	cameraButtonContainer: {
+		position: 'relative', /* 부모 요소에 위치 지정 */
+		width: 50,/* 버튼의 너비 */
+		height: 50 /* 버튼의 높이 */
+	},
+	  
+	outerCircle: {
+		position: 'absolute', /* 부모 요소를 기준으로 위치 지정 */
+		top: 0,
+		left: 0,
+		width: '100%',
+		height: '100%',
+		borderRadius: '50%', /* 원형 테두리 */
+		backgroundColor: '#000', /* 배경색 및 투명도 */
+		borderWidth: 2, /* 테두리 */
+		borderColor:'#fff'
+	  },
+	innerCircle: {
+		position: 'absolute', /* 부모 요소를 기준으로 위치 지정 */
+		top: '50%',
+		left: '50%',
+		transform: 'translate(-50%, -50%)', /* 중앙 정렬 */
+		width: '80%', /* 안쪽 원의 크기 */
+		height: '80%', /* 안쪽 원의 크기 */
+		borderRadius: '50%', /* 원형 테두리 */
+		backgroundColor: '#fff' /* 흰색 배경 */
+	  }
 })
 const today = new Date();
 const formatted = today.toISOString().split('T')[0];
@@ -30,11 +58,12 @@ const Calendar = ({ navigation }) => {
 	const [modalVisible, setModalVisible] = useState(false);
 	const [selectedDate, setSelectedDate] = useState('');
 	const calendarRef = useRef();
-	const [image, setImage] = useState('')
+	const [isFront, setIsFront] = useState(false)
 	const [photoMap, setPhotoMap] = useState({});
 	const [isCamera, setIsCamera] = useState(false);
 	const devices = useCameraDevices();
 	const device = devices?.find(e => e.position == 'back');
+	const deviceFront = devices?.find(e => e.position == 'front');
 	const cameraRef = useRef<Camera>(null);
 
 	const handlePhoto = async() => {
@@ -42,10 +71,11 @@ const Calendar = ({ navigation }) => {
 		let objectKey = 'day' + selectedDate.day
 		if(cameraRef.current == null) return;
 		const photo = await cameraRef.current.takePhoto({});
-		const dateKey = new Date().toISOString().split('T')[0];
-		const destPath = `${RNFS.DocumentDirectoryPath}/user-${dateKey}.jpg`;
+		const destPath = `${RNFS.DocumentDirectoryPath}/user-${selectedDate.year}-${selectedDate.month}-${selectedDate.day}.jpg`;
 		await RNFS.copyFile(photo.path, destPath);
-		photoArr[objectKey].push({pkg:'user', date: dateKey, path: destPath})
+		const now = new Date()
+		const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+		photoArr[objectKey].push({pkg:'user',app:'셀프',time: time, date: `${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`, path: destPath})
 		setSelectedImages(photoArr[objectKey].filter(e => e.path))
 		setPhotoMap(photoArr)
 		await AsyncStorage.setItem(`month-photo`, JSON.stringify(photoArr));
@@ -134,7 +164,7 @@ const Calendar = ({ navigation }) => {
 			{isCamera ? (
 			<>
 				<View style={{display:'flex',width:'100%', flex:1, justifyContent:'center', alignItems:'center'}}>
-					{device &&
+					{device && !isFront &&
 						<Camera
 							ref={cameraRef}
 							style={{flex:1, width:'100%'}}
@@ -145,7 +175,28 @@ const Calendar = ({ navigation }) => {
 							audio={false}
 						/>
 					}
-					<Button title="📸 촬영" onPress={() => handlePhoto()} />
+					{deviceFront && isFront &&
+						<Camera
+							ref={cameraRef}
+							style={{flex:1, width:'100%'}}
+							device={deviceFront}
+							isActive={true}
+							photo={true}
+							video={false}
+							audio={false}
+						/>
+					}
+					<View style={{height:80, backgroundColor:'#000', width:'100%',flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+						<View style={{width:50, height:50}}>
+						</View>
+						<TouchableOpacity style={{...styles.cameraButtonContainer}} onPress={handlePhoto}>
+							<View style={{...styles.outerCircle}}></View>
+							<View style={{...styles.innerCircle}}></View>
+						</TouchableOpacity>
+						<TouchableOpacity style={{width: 50, alignItems:'flex-start'}} onPress={() => setIsFront(!isFront)}>
+							<IconAwesome color="#fff" size={24} name="cameraswitch"/>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</> )
 			:
@@ -220,9 +271,9 @@ const Calendar = ({ navigation }) => {
 			<Modal
 				isVisible={modalVisible}
 				onBackdropPress={() => setModalVisible(false)}
-				style={{ justifyContent: 'center', alignItems: 'center' }} 
+				style={{ justifyContent: 'center', alignItems: 'center'}} 
 			>
-				<View style={{backgroundColor:'white', width:350, height:400, borderColor: '#cccccc', borderRadius: 10, padding: 20, alignItems:'center'}}>
+				<View style={{backgroundColor:'white', width:350, height:410, borderColor: '#cccccc', borderRadius: 10, padding: 20, alignItems:'center'}}>
 					<CustomText style={{fontSize:25, marginBottom:10}}>
 						{selectedDate?.year || ''}.{selectedDate?.month || ''}.{selectedDate?.day || ''}.
 					</CustomText>
@@ -272,38 +323,41 @@ const Calendar = ({ navigation }) => {
 							onPress={() => setCurrentImageIndex(currentImageIndex + 1)}
 							style={{ padding: 10 }}
 						>
-							<Icon
-								name="arrow-right"
-								size={24}
-								color={((currentImageIndex === (selectedImages.length - 1)) || selectedImages.length == 0) ? '#ccc' : '#000'}
+								<Icon
+									name="arrow-right"
+									size={24}
+									color={((currentImageIndex === (selectedImages.length - 1)) || selectedImages.length == 0) ? '#ccc' : '#000'}
+								/>
+							</TouchableOpacity>
+						</View>
+						{selectedImages.length > 0 && 
+						<TouchableOpacity
+							onPress={() => {
+								if(!isLoading) mutateHandleStar({selectedDate, pkg: selectedImages[currentImageIndex].pkg})
+							}}
+							style={{ position: 'absolute', top: 40, right: 40 }}
+						>
+							<MaterialIcon
+								name={
+									selectedImages[currentImageIndex].star
+									? 'star'
+									: 'star-border'
+								}
+								size={30}
+								color={
+									selectedImages[currentImageIndex].star
+									? '#FFD700'
+									: '#ccc'
+								}
 							/>
+						</TouchableOpacity>}
+						{selectedImages?.length > 0 && 
+						<View style={{marginTop:10}}>
+							<CustomText>{selectedImages[currentImageIndex]?.app + ' 디톡스 - ' + selectedImages[currentImageIndex]?.time}</CustomText>
+						</View>}
+						<TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 25 , width:100, borderWidth:1, borderColor:'#a9a9a9', borderRadius:8, paddingTop:10, paddingBottom:10, alignItems:'center'}}>
+							<CustomText style={{ fontSize: 15, marginTop:0 }}>닫기</CustomText>
 						</TouchableOpacity>
-					</View>
-					{selectedImages.length > 0 && 
-					<TouchableOpacity
-						onPress={() => {
-							if(!isLoading) mutateHandleStar({selectedDate, pkg: selectedImages[currentImageIndex].pkg})
-						}}
-						style={{ position: 'absolute', top: 40, right: 40 }}
-					>
-						<MaterialIcon
-							name={
-								selectedImages[currentImageIndex].star
-								? 'star'
-								: 'star-border'
-							}
-							size={30}
-							color={
-								selectedImages[currentImageIndex].star
-								? '#FFD700'
-								: '#ccc'
-							}
-						/>
-					</TouchableOpacity>}
-
-					<TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 5 }}>
-						<CustomText style={{ fontSize: 20, marginTop:0 }}>닫기</CustomText>
-					</TouchableOpacity>
 					</View>
 				</Modal>
 			</>

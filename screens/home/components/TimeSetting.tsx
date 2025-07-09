@@ -30,14 +30,16 @@ const TimeSetting = ({ navigation }) => {
 	const [week, setWeek] = useState([])
 	const [isInit, setIsInit] = useState(false)
 	const [isSet, setIsSet] = useState(false)
+	const [isSuccess, setIsSuccess] = useState(false)
 	const currPkg = currentAppZustand(state => state.currentApp)
 	const getAppInfo = async() => {
 		const item = await getWeekSuccessList(appData)
 		const result = await UsageMonitor.isUsageThresholdSet(appData.pkg)
-		return {list: item, isUsage: !!result}
-	}
-	const checkIsSuccess = async() => {
-		
+		let photoArr = JSON.parse(await AsyncStorage.getItem('month-photo')) || {...monthObj}
+		let objectKey = 'day' + new Date().getDate()
+		let isSuccess = false
+		if(photoArr[objectKey].find(e => e.pkg == currPkg)?.path) isSuccess = true
+		return {list: item, isUsage: !!result, isSuccess: isSuccess}
 	}
 	const removeLimit = async() => {
 		await UsageMonitor.removeUsageThreshold(appData.pkg);
@@ -67,6 +69,7 @@ const TimeSetting = ({ navigation }) => {
 		onSuccess:(data) => {
 			setWeek(data.list)
 			setIsSet(data.isUsage)
+			setIsSuccess(data.isSuccess)
 		}
 	})
 	const {data : item =  {appList: [], appPerWeekList: [], weekList: []}, isLoading: loadingGetInfo} = useScreentime()
@@ -140,6 +143,9 @@ const TimeSetting = ({ navigation }) => {
 							UsageMonitor.setUsageThreshold(appData.pkg, selectedHour * 3600 + selectedMinute * 60)
 										.then(() => console.log('제한 시간 설정됨'))
 										.catch((e) => console.error('제한 시간 설정 실패', e));
+							if(isSuccess){
+								Alert.alert('알림', '오늘은 완료되었으므로 내일부터 알람이 실행됩니다.')
+							}
 							navigation.navigate('AppSetting');
 						}
 						else{
