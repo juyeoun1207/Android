@@ -254,7 +254,7 @@ const Home = ({ navigation }) => {
 										}} 
 										style={{...styles.appListBox, marginLeft:20, paddingRight:10, flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', position:'relative'}}
 									>
-										<View style={{height:'100%', position:'absolute', left:0, width:data.ratio + '%', backgroundColor:'#F5E2B8'}}></View>
+										<View style={{height:'100%', position:'absolute', left:0, width:data.ratio + '%', backgroundColor:'#F5E2B8',borderTopLeftRadius:7, borderBottomLeftRadius:7}}></View>
 										<View style={{flexDirection:'row', alignItems:'center'}}>
 											<Image
 												source={{ uri: `data:image/png;base64,${data.icon}` }}
